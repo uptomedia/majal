@@ -6,7 +6,7 @@ import 'package:grodudes/components/QuantityToggle.dart';
 import 'package:grodudes/components/StyledProductPrice.dart';
 import 'package:grodudes/helper/ImageFetcher.dart';
 import 'package:grodudes/models/Product.dart';
- import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 
 import '../core/configurations/assets.dart';
 import '../core/configurations/styles.dart';
@@ -67,23 +67,19 @@ class ProductCard extends StatelessWidget {
                       : EdgeInsets.only(right: 22.w, left: 68.w, top: 21.h),
                   child: Center(
                       child: Container(
-
-
                           decoration: Styles.shadowPrimaryDecoration.copyWith(
                               borderRadius: BorderRadius.all(
-                            Radius.circular(207.r),
-
-                          ), boxShadow: [  ] ),
+                                Radius.circular(207.r),
+                              ),
+                              boxShadow: []),
                           child: ClipRRect(
-
-
-
                             // color: Colors.black,
 
                             borderRadius: BorderRadius.circular(200.r),
                             child: item.data['images'].length != 0
                                 ? ImageFetcher.getImage(
-                                    item.data['images'][0]['src'],fit: BoxFit.scaleDown)
+                                    item.data['images'][0]['src'],
+                                    fit: BoxFit.scaleDown)
                                 : ImageFetcher.getImage(""),
                           )))),
               SizedBox(
@@ -107,34 +103,32 @@ class ProductCard extends StatelessWidget {
                             style: Styles.boldTextStyle
                                 .copyWith(fontSize: Styles.fontSize14),
                           )),
-
                     ],
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 14.w,
-                  ), Container(
-                width: 100.w,
-                height: 32.h,
-                child: this.item.data['description'].length > 0
-                    ? Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 0, vertical: 0),
-                  child:
-
-                  ProductDescriptionText(
-                    S.of(context).about,
-                    this.item.data['description'],
-                  ),
-                )
-                    : SizedBox(
-                  width: 75.w,
-                  height: 22.h,
+              Row(children: [
+                SizedBox(
+                  width: 14.w,
                 ),
-              ),]),
+                Container(
+                  width: 100.w,
+                  height: 32.h,
+                  child: this.item.data['description'].length > 0
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 0),
+                          child: ProductDescriptionText(
+                            S.of(context).about,
+                            this.item.data['description'],
+                          ),
+                        )
+                      : SizedBox(
+                          width: 75.w,
+                          height: 22.h,
+                        ),
+                ),
+              ]),
               SizedBox(height: 1.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -213,30 +207,24 @@ class ProductCard extends StatelessWidget {
                 ),
 
           //like
-          Consumer<CartManager>(
-              builder: (context, userManager, child) {
-                return
-                  Provider
-                      .of<LocaleProvider>(context, listen: false)
-                      .locale
-                      .languageCode != "ar" ?
-                  Positioned(
-                      top: 15.h,
-
-                      right: 15.w,
-                       child:
-                      InkWell(
-                          onTap: () {
-                            Provider.of<CartManager>(context, listen: false)
-                                .isPresentInWishList(item)
-                                ? Provider.of<CartManager>(context, listen: false)
-                                .removeWishItem(item) : Provider.of<CartManager>(
-                                context, listen: false).addWishItem(item);
-                          },
-                          child:
-
-
-                        Container(
+          Consumer<CartManager>(builder: (context, userManager, child) {
+            return Provider.of<LocaleProvider>(context, listen: false)
+                        .locale
+                        .languageCode !=
+                    "ar"
+                ? Positioned(
+                    top: 15.h,
+                    right: 15.w,
+                    child: InkWell(
+                        onTap: () {
+                          Provider.of<CartManager>(context, listen: false)
+                                  .isPresentInWishList(item)
+                              ? Provider.of<CartManager>(context, listen: false)
+                                  .removeWishItem(item)
+                              : Provider.of<CartManager>(context, listen: false)
+                                  .addWishItem(item);
+                        },
+                        child: Container(
                           width: 25.w,
                           height: 25.h,
                           padding: EdgeInsets.all(4.0.h),
@@ -245,80 +233,63 @@ class ProductCard extends StatelessWidget {
                               borderRadius: BorderRadius.all(
                                 Radius.circular(7.r),
                               )),
-                          child:  InkWell(child:
-                          SizedBox(
+                          child: SizedBox(
                               // width: 13.w,
                               // height: 10.w,
- child:
- //     .isPresentInWishList(item)?
- // Icons.favorite:Icons.favorite_border, color:Styles.ColorWhite))
-                             SvgPicture.asset(
-
-                                 Provider.of<CartManager>(context, listen: false)
-                                     .isPresentInWishList(item)?
-                                 Assets.SVG_likeFilled:Assets.SVG_wishlist,
-                               fit: BoxFit.fitHeight,
-                                 //color:
+                              child:
+                                  //     .isPresentInWishList(item)?
+                                  // Icons.favorite:Icons.favorite_border, color:Styles.ColorWhite))
+                                  SvgPicture.asset(
+                            Provider.of<CartManager>(context, listen: false)
+                                    .isPresentInWishList(item)
+                                ? Assets.SVG_likeFilled
+                                : Assets.SVG_wishlist,
+                            fit: BoxFit.fitHeight,
+                            //color:
                             // Provider.of<CartManager>(context, listen: false)
                             //     .isPresentInWishList(item) ? Styles.ColorOrangeLite : Styles
                             //     .ColorWhite
-                              // height:149.h ,
-                              //   width: 47.h,
-                              //   margin: EdgeInsets.all(0),
-                              //   iconSize: 24,
-                                       )),
-                      ),
-                      )
-
-
-                  )
-                  ) :
-
-                  Positioned(
-                      top: 15.h,
-
-                      left: 15.w,
-                      // left: Provider.of<LocaleProvider>(context, listen: false).locale.languageCode!="ar"? 0.w:21.w,
-                      child:   Container(
-                          padding: EdgeInsets.all(4.0.h),
-                          width: 25.w,
-                          height: 25.h,
-                          decoration: Styles.roundedDecoration.copyWith(
-                              color: Styles.colorPrimary,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(7.r),
-                              )),
-                          child:  InkWell(child:
-                          SizedBox(
-                            width: 13.w,
-                            height: 13.w,
-                            // alignment: Alignment.topRight,
-                            child:
-                            // Icon( Provider.of<CartManager>(context, listen: false)
-                            //     .isPresentInWishList(item)?Icons.favorite:Icons.favorite_border, color:Styles.ColorWhite)
-                            //
-                            SvgPicture.asset( Provider.of<CartManager>(context, listen: false)
-                                .isPresentInWishList(item)?
-                            Assets.SVG_likeFilled:Assets.SVG_wishlist, color:  Styles
-                                .ColorWhite,
-                              fit: BoxFit.scaleDown,
-                              // height:149.h ,
-                              //   width: 47.h,
-                              //   margin: EdgeInsets.all(0),
-                              //   iconSize: 24,
-                            ),
-                          ), onTap: () {
+                            // height:149.h ,
+                            //   width: 47.h,
+                            //   margin: EdgeInsets.all(0),
+                            //   iconSize: 24,
+                          )),
+                        )))
+                : Positioned(
+                    top: 15.h,
+                    left: 15.w,
+                    // left: Provider.of<LocaleProvider>(context, listen: false).locale.languageCode!="ar"? 0.w:21.w,
+                    child: Container(
+                        padding: EdgeInsets.all(4.0.h),
+                        width: 25.w,
+                        height: 25.h,
+                        decoration: Styles.roundedDecoration.copyWith(
+                            color: Styles.colorPrimary,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(7.r),
+                            )),
+                        child: SizedBox(
+                          width: 13.w,
+                          height: 13.w,
+                          // alignment: Alignment.topRight,
+                          child:
+                              // Icon( Provider.of<CartManager>(context, listen: false)
+                              //     .isPresentInWishList(item)?Icons.favorite:Icons.favorite_border, color:Styles.ColorWhite)
+                              //
+                              SvgPicture.asset(
                             Provider.of<CartManager>(context, listen: false)
-                                .isPresentInWishList(item)
-                                ? Provider.of<CartManager>(context, listen: false)
-                                .removeWishItem(item) : Provider.of<CartManager>(
-                                context, listen: false).addWishItem(item);
-                          },))
-                  );
-
-              }
-          )
-
+                                    .isPresentInWishList(item)
+                                ? Assets.SVG_likeFilled
+                                : Assets.SVG_wishlist,
+                            color: Styles.ColorWhite,
+                            fit: BoxFit.scaleDown,
+                            // height:149.h ,
+                            //   width: 47.h,
+                            //   margin: EdgeInsets.all(0),
+                            //   iconSize: 24,
+                          ),
+                        )));
+          })
         ]),
       ),
     );

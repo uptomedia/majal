@@ -63,7 +63,7 @@ class _AccountDetailsState extends State<AccountDetails> {
     setState(() {
       _selectedIndex = _spf.getInt(SharedPreferencesKeys.LanguageIndex) ?? 0;
       _chosenValue = getStringValue(_selectedIndex + 1);
-      _selectedScale=0;
+      _selectedScale = 0;
     });
   }
 
@@ -97,117 +97,99 @@ class _AccountDetailsState extends State<AccountDetails> {
         //   // backgroundColor: Styles.colorBackGround,
         // ),
         backgroundColor: Styles.colorBackGround,
-        body:
-        SafeArea(child:
-            SingleChildScrollView(child:
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        body: SafeArea(
+            child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
 
-          // scrollDirection: Axis.vertical,
-          children: <Widget>[
-
-            MajalAppBar(
-              isProfile: true,
-              withBack: false,
-              tail: [
-                InkWell(
-                    onTap: (){
-                      _logoutFuntction(context,dataProvider);
-                    },
-                    child:
-
-                    Container(
-                        decoration: Styles.iconDecoration.copyWith(color: Styles.ColorLogout),
-
-                        height: 47.h,
-                        width: 45.h,
-                        padding: EdgeInsets.symmetric(horizontal: 10.h,vertical: 11.h),
-
-                        child:
-                        // Icon(Icons.chevron_right,color:Colors.white,)
-                        SvgPicture.asset(
-                          Assets.SVG_logout,
-                          allowDrawingOutsideViewBox: true,
-
+            // scrollDirection: Axis.vertical,
+            children: <Widget>[
+              MajalAppBar(
+                isProfile: true,
+                withBack: false,
+                tail: [
+                  InkWell(
+                      onTap: () {
+                        _logoutFuntction(context, dataProvider);
+                      },
+                      child: Container(
+                          decoration: Styles.iconDecoration
+                              .copyWith(color: Styles.ColorLogout),
                           height: 47.h,
                           width: 45.h,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.h, vertical: 11.h),
+                          child:
+                              // Icon(Icons.chevron_right,color:Colors.white,)
+                              SvgPicture.asset(
+                            Assets.SVG_logout,
+                            allowDrawingOutsideViewBox: true,
+                            height: 47.h,
+                            width: 45.h,
+                          )))
+                ],
+              ),
+              // CommonSizes.vBigSpace,
+              InkWell(
+                  onTap: () {},
+                  child: Center(
+                      child: Container(
+                          decoration: Styles.tilesDecoration.copyWith(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(220.r),
+                              ),
+                              color: Colors.transparent),
+                          child:
+                              // Image.asset(Assets.PNG_BackgroudImage),
+                              Image.asset(
+                            Assets.PNG_profile,
+                            fit: BoxFit.fill,
 
-                        ))
-                )
+                            height: 220.h,
+                            width: 220.w,
 
-              ],
-            ),
-            // CommonSizes.vBigSpace,
-            InkWell(
-                onTap: () {
+                            //   Image.network(
+                            // dataProvider.wcUserInfo!['avatar_url'] ??
+                            //     '',
+                            // height: 220.h,
+                            // width: 220.w,
+                            // errorBuilder:
+                            //     (context, error, stackTrace) =>
+                            //
+                            //         SvgPicture.asset(
+                            //           Assets.SVG_UserProfile,
+                            //           height: 220.h,
+                            //           width: 220.w,
+                            //           // color: Styles.colorSecondary,
+                            //         ),
+                            // Icon(Icons.person, size: 220.h),
+                            // ),
+                          )))),
+              // CommonSizes.vSmallSpace,
+              Text(
+                dataProvider.wcUserInfo!['username'],
+                style: Styles.boldTextStyle,
+                textAlign: TextAlign.center,
+              ),
+              // CommonSizes.vSmallerSpace,
+              Text(dataProvider.wcUserInfo!['email'],
+                  style: Styles.regularTextStyle),
+              CommonSizes.vSmallSpace,
+              _buildEditeProfilWidget(context),
+              CommonSizes.vSmallSpace,
+              _buildBillingAddressWidget(context),
 
-                },
-                child:
-
-                        Center(child:
-                            Container(
-
-                                decoration:
-                            Styles.tilesDecoration.copyWith( borderRadius: BorderRadius.all(
-                              Radius.circular(220.r),
-                            ),color: Colors.transparent
-                            )
-                                ,
-                                child:
-                        // Image.asset(Assets.PNG_BackgroudImage),
-                        Image.asset(
-                          Assets.PNG_profile,
-                           fit: BoxFit.fill,
-
-                          height: 220.h,
-                          width: 220.w,
-
-
-
-                          //   Image.network(
-                          // dataProvider.wcUserInfo!['avatar_url'] ??
-                          //     '',
-                          // height: 220.h,
-                          // width: 220.w,
-                          // errorBuilder:
-                          //     (context, error, stackTrace) =>
-                          //
-                          //         SvgPicture.asset(
-                          //           Assets.SVG_UserProfile,
-                          //           height: 220.h,
-                          //           width: 220.w,
-                          //           // color: Styles.colorSecondary,
-                          //         ),
-                          // Icon(Icons.person, size: 220.h),
-                          // ),
-                        ))
-                    )),
-            // CommonSizes.vSmallSpace,
-            Text(
-              dataProvider.wcUserInfo!['username'],
-              style: Styles.boldTextStyle,
-              textAlign: TextAlign.center,
-            ),
-            // CommonSizes.vSmallerSpace,
-            Text(
-              dataProvider.wcUserInfo!['email'],
-              style:  Styles.regularTextStyle
-            ),
-            CommonSizes.vSmallSpace,
-            _buildEditeProfilWidget(context),
-            CommonSizes.vSmallSpace,
-            _buildBillingAddressWidget(context),
-
-            CommonSizes.vSmallSpace,
-            _buildWilshlistWidget(context),
-            CommonSizes.vSmallSpace,
-            _buidLanguage(),
-            // CommonSizes.vSmallSpace,
-            // _buildScaleWidget(),
-            // _buildLogoutWidget(context, dataProvider),
-          ],
-        ),)));
+              CommonSizes.vSmallSpace,
+              _buildWilshlistWidget(context),
+              CommonSizes.vSmallSpace,
+              _buidLanguage(),
+              // CommonSizes.vSmallSpace,
+              // _buildScaleWidget(),
+              // _buildLogoutWidget(context, dataProvider),
+            ],
+          ),
+        )));
   }
 
   _buidLanguage() {
@@ -224,12 +206,10 @@ class _AccountDetailsState extends State<AccountDetails> {
               // CommonSizes.hSmallSpace,
               Expanded(
                   child: Container(
-
                       height: 150.h,
                       child: DropdownButton(
-dropdownColor: Colors.white,
+                        dropdownColor: Colors.white,
                         icon: Icon(
-
                           Icons.chevron_right,
                           color: Styles.colorSecondary2,
                         ),
@@ -240,11 +220,9 @@ dropdownColor: Colors.white,
                           return Languages.map<Widget>((String item) {
                             return Row(
                               children: [
-                                Text(
-                                  item,
-                                  textAlign: TextAlign.center,
-                                  style:Styles.regularTextStyle
-                                ),
+                                Text(item,
+                                    textAlign: TextAlign.center,
+                                    style: Styles.regularTextStyle),
                               ],
                             );
                           }).toList();
@@ -274,22 +252,20 @@ dropdownColor: Colors.white,
                         },
                       ))),
               Container(
-                  decoration: Styles.iconDecoration.copyWith(color: Styles.colorPrimary.withOpacity(0.7)),
-                  padding:EdgeInsets.symmetric(horizontal: 10.h,vertical: 11.h),
-
+                  decoration: Styles.iconDecoration
+                      .copyWith(color: Styles.colorPrimary.withOpacity(0.7)),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.h, vertical: 11.h),
                   height: 40.h,
                   width: 40.h,
-                  child:
-                SvgPicture.asset(
-                  Assets.SVG_Languges,
-                  allowDrawingOutsideViewBox: true,
-
-                  height: 40.h,
-                  width: 40.w,
-
-                )
+                  child: SvgPicture.asset(
+                    Assets.SVG_Languges,
+                    allowDrawingOutsideViewBox: true,
+                    height: 40.h,
+                    width: 40.w,
+                  )
                   // Icon(Icons.chevron_right,color:Colors.white,)
-              ),
+                  ),
               // CommonSizes.hSmallSpace,
             ])));
   }
@@ -331,16 +307,15 @@ dropdownColor: Colors.white,
         onTap: () {
           Utils.pushNewScreenWithRouteSettings(
             context,
-            settings:
-            RouteSettings(name: RoutePaths.ProductDetailsPage),
+            settings: RouteSettings(name: RoutePaths.ProductDetailsPage),
             withNavBar: false,
             screen: ProfileDetails(
               title: S.of(context).editeProfile,
               type: 'profile',
               updateCb: (Map<String, dynamic> newAddress) async {
-                String msg = await Provider.of<UserManager>(context,
-                    listen: false)
-                    .updateUser(_filterData(newAddress));
+                String msg =
+                    await Provider.of<UserManager>(context, listen: false)
+                        .updateUser(_filterData(newAddress));
                 return msg;
               },
             ),
@@ -348,45 +323,43 @@ dropdownColor: Colors.white,
           // Navigator.push(
           //     context, CupertinoPageRoute(builder: (context) => Orders()));
         },
-        child: Center(child: Container(
-            height: 60.h,
-            width: 307.w,
-            // margin: EdgeInsets.symmetric(horizontal: 50.w),
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18.w),
-            // color: Colors.black,
-            decoration: Styles.tilesDecoration,
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  // CommonSizes.hSmallSpace,
-                  Text(
-                    S.of(context).editAccountDetails,
-                    style:Styles.regularTextStyle,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Expanded(child: Container()),
-                  Container(
-                    decoration: Styles.iconDecoration.copyWith(color: Styles.colorPrimary.withOpacity(0.7)),
+        child: Center(
+            child: Container(
+                height: 60.h,
+                width: 307.w,
+                // margin: EdgeInsets.symmetric(horizontal: 50.w),
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18.w),
+                // color: Colors.black,
+                decoration: Styles.tilesDecoration,
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      // CommonSizes.hSmallSpace,
+                      Text(
+                        S.of(context).editAccountDetails,
+                        style: Styles.regularTextStyle,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Expanded(child: Container()),
+                      Container(
+                          decoration: Styles.iconDecoration.copyWith(
+                              color: Styles.colorPrimary.withOpacity(0.7)),
+                          height: 40.h,
+                          width: 40.h,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.h, vertical: 11.h),
+                          child: SvgPicture.asset(
+                            Assets.edit_profile,
+                            allowDrawingOutsideViewBox: true,
+                            height: 40.h,
+                            width: 40.h,
+                          )
 
-                      height: 40.h,
-                      width: 40.h,
-                      padding: EdgeInsets.symmetric(horizontal: 10.h,vertical: 11.h),
-
-                      child:
-                    SvgPicture.asset(
-                      Assets.edit_profile,
-                      allowDrawingOutsideViewBox: true,
-
-                      height: 40.h,
-                      width: 40.h,
-
-                    )
-
-                      // Icon(Icons.chevron_right,color:Colors.white,)
-                  ),
-                  // CommonSizes.hSmallSpace,
-                ]))));
+                          // Icon(Icons.chevron_right,color:Colors.white,)
+                          ),
+                      // CommonSizes.hSmallSpace,
+                    ]))));
   }
 
   _buildBillingAddressWidget(context) {
@@ -400,13 +373,15 @@ dropdownColor: Colors.white,
               title: S.of(context).billingAddress,
               type: 'billing',
               updateCb: (List<Map<String, dynamic>> newAddress) async {
-                Map<String,dynamic> res={};
-                if(newAddress.length==1){
+                Map<String, dynamic> res = {};
+                if (newAddress.length == 1) {
                   res.addAll({'billing': _filterData(newAddress[0])});
                 }
-                if(newAddress.length==2){
-                  res.addAll({'billing': _filterData(newAddress[0]),
-          'shipping': _filterData(newAddress[1])});
+                if (newAddress.length == 2) {
+                  res.addAll({
+                    'billing': _filterData(newAddress[0]),
+                    'shipping': _filterData(newAddress[1])
+                  });
                 }
                 String msg =
                     await Provider.of<UserManager>(context, listen: false)
@@ -415,46 +390,43 @@ dropdownColor: Colors.white,
               },
             ),
           );
-
         },
-        child: Center(child:Container(
-            height: 60.h,
-            width: 307.w,
-            // margin: EdgeInsets.symmetric(horizontal: 50.w),
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18.w),
-            // color: Colors.white,
-            decoration: Styles.tilesDecoration,
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  // CommonSizes.hSmallSpace,
-                  Text(
-                    S.of(context).billingAndShipping,
-                    style: Styles.regularTextStyle,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Expanded(child: Container()),
-                  Container(
-                      decoration: Styles.iconDecoration.copyWith(color: Styles.colorPrimary.withOpacity(0.7)),
-
-                      height: 40.h,
-                      width: 40.h,
-                      padding: EdgeInsets.symmetric(horizontal: 10.h,vertical: 11.h),
-
-                      child:
-                      // Icon(Icons.chevron_right,color:Colors.white,)
-                    SvgPicture.asset(
-                      Assets.SVG_Address,
-                      allowDrawingOutsideViewBox: true,
-
-                      height: 40.h,
-                      width: 40.h,
-
-                    )
-                  ),
-                  // CommonSizes.hSmallSpace,
-                ]))));
+        child: Center(
+            child: Container(
+                height: 60.h,
+                width: 307.w,
+                // margin: EdgeInsets.symmetric(horizontal: 50.w),
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 18.w),
+                // color: Colors.white,
+                decoration: Styles.tilesDecoration,
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      // CommonSizes.hSmallSpace,
+                      Text(
+                        S.of(context).billingAndShipping,
+                        style: Styles.regularTextStyle,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Expanded(child: Container()),
+                      Container(
+                          decoration: Styles.iconDecoration.copyWith(
+                              color: Styles.colorPrimary.withOpacity(0.7)),
+                          height: 40.h,
+                          width: 40.h,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.h, vertical: 11.h),
+                          child:
+                              // Icon(Icons.chevron_right,color:Colors.white,)
+                              SvgPicture.asset(
+                            Assets.SVG_Address,
+                            allowDrawingOutsideViewBox: true,
+                            height: 40.h,
+                            width: 40.h,
+                          )),
+                      // CommonSizes.hSmallSpace,
+                    ]))));
   }
 
   // _buildShippingAddressWidget(context) {
@@ -523,11 +495,8 @@ dropdownColor: Colors.white,
             context,
             settings: RouteSettings(name: RoutePaths.Wishtems),
             withNavBar: false,
-            screen: Wishtems(
-
-            ),
+            screen: Wishtems(),
           );
-
         },
         child: Container(
             height: 60.h,
@@ -547,33 +516,33 @@ dropdownColor: Colors.white,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Expanded(child: Container()),
-        Container(
-            decoration: Styles.iconDecoration.copyWith(color: Styles.colorPrimary.withOpacity(0.7)),
+                  Container(
+                      decoration: Styles.iconDecoration.copyWith(
+                          color: Styles.colorPrimary.withOpacity(0.7)),
+                      height: 40.h,
+                      width: 40.h,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 10.h, vertical: 11.h),
+                      child:
+                          // Icon(Icons.chevron_right,color:Colors.white,)
+                          SvgPicture.asset(
+                        Assets.SVG_wishlist,
+                        fit: BoxFit.scaleDown,
+                        // allowDrawingOutsideViewBox: true,
 
-            height: 40.h,
-            width: 40.h,
-            padding: EdgeInsets.symmetric(horizontal: 10.h,vertical: 11.h),
-
-            child:
-            // Icon(Icons.chevron_right,color:Colors.white,)
-            SvgPicture.asset(
-              Assets.SVG_wishlist,
-              fit: BoxFit.scaleDown,
-              // allowDrawingOutsideViewBox: true,
-
-              // height: 40.h,
-              // width: 40.h,
-
-            )
-        ),
+                        // height: 40.h,
+                        // width: 40.h,
+                      )),
                   // CommonSizes.hSmallSpace,
                 ])));
   }
-_logoutFuntction(context, dataProvider){
-  dataProvider.logOut();
-  // Provider.of<CartManager>(context, listen: false).clearCart();
-  Phoenix.rebirth(context);
-}
+
+  _logoutFuntction(context, dataProvider) {
+    dataProvider.logOut();
+    // Provider.of<CartManager>(context, listen: false).clearCart();
+    Phoenix.rebirth(context);
+  }
+
   _buildLogoutWidget(context, dataProvider) {
     return GestureDetector(
         onTap: () {
@@ -701,7 +670,7 @@ class _LoginErrorDescriptionWidget extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 24),
-          RaisedButton(
+          ElevatedButton(
             onPressed: () {},
             child: Text('Retry Login'),
           )

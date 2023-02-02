@@ -16,8 +16,12 @@ const productsPerPage = 50;
 class ProductsManager with ChangeNotifier {
   Map<int, Product> products = {};
   Map<int, Category> categories = {};
-    DataFull  dataFull  =
-    new DataFull(localWishItems: [], localCartItems:[],wcUserInfo: {},wpUserInfo: {},success: {});
+  DataFull dataFull = new DataFull(
+      localWishItems: [],
+      localCartItems: [],
+      wcUserInfo: {},
+      wpUserInfo: {},
+      success: {});
 
   int ApiCall = 0;
   bool fromSplash = false;
@@ -40,7 +44,12 @@ class ProductsManager with ChangeNotifier {
     popularProductIds = {};
     topRatedProductIds = {};
     latestProductIds = {};
-      dataFull=  DataFull(localWishItems: [], localCartItems:[],wcUserInfo: {},wpUserInfo: {},success: {});
+    dataFull = DataFull(
+        localWishItems: [],
+        localCartItems: [],
+        wcUserInfo: {},
+        wpUserInfo: {},
+        success: {});
 
     wooCommerceAPI = WooCommerceAPI(
         url: Secret.baseUrl,
@@ -60,15 +69,16 @@ class ProductsManager with ChangeNotifier {
     return item;
   }
 
-  Future fetchAllParentCategories({bool shouldupdate:true,bool fromSplash=false}) async {
+  Future fetchAllParentCategories(
+      {bool shouldupdate: true, bool fromSplash = false}) async {
     this.ApiCall++;
 
     if (this.categories.values.length > 0) return true;
     List<dynamic> fetchedCategories = [];
-if(this.ApiCall<3){
-    fetchedCategories = await wooCommerceAPI
-        .getAsync('products/categories?parent=0&per_page=50&page=1');
-}
+    if (this.ApiCall < 3) {
+      fetchedCategories = await wooCommerceAPI
+          .getAsync('products/categories?parent=0&per_page=50&page=1');
+    }
     // .getAsync('products');
     if (fetchedCategories != null && fetchedCategories.length > 0) {
       fetchedCategories
@@ -76,16 +86,15 @@ if(this.ApiCall<3){
               element['name'].toString().toLowerCase() != 'uncategorized')
           .forEach(
               (category) => categories[category['id']] = Category(category));
-      if(shouldupdate)
-      notifyListeners();
-      if(fromSplash&&this.ApiCall>3){
+      if (shouldupdate) notifyListeners();
+      if (fromSplash && this.ApiCall > 3) {
         notifyListeners();
-
       }
       return true;
     }
   }
-  Future<DataFull> fetchAll( {bool fromSplash=false}) async {
+
+  Future<DataFull> fetchAll({bool fromSplash = false}) async {
     List<Product> localCartItems = [];
     List<Product> localWishItems = [];
     try {
@@ -102,9 +111,8 @@ if(this.ApiCall<3){
           }
         });
         if (itemIds.length > 0) {
-
           List<dynamic> fetchedCartItems =
-          await fetchCartItems(itemIds.keys.toList());
+              await fetchCartItems(itemIds.keys.toList());
           fetchedCartItems.forEach((item) {
             Product product = Product(item);
             product.quantity = itemIds[item['id']] ?? 1;
@@ -113,13 +121,12 @@ if(this.ApiCall<3){
         }
       }
       if (wishData != null) {
-        List<dynamic>  localWishItemstmp = json.decode(wishData)   ;
-        for(int i=0;i<localWishItemstmp.length;i++){
-          localWishItems.add(new Product(localWishItemstmp[i]
-
-          ));
+        List<dynamic> localWishItemstmp = json.decode(wishData);
+        for (int i = 0; i < localWishItemstmp.length; i++) {
+          localWishItems.add(new Product(localWishItemstmp[i]));
         }
-        this.dataFull.localWishItems= localWishItems;// Map<int, int> wishIds = {};
+        this.dataFull.localWishItems =
+            localWishItems; // Map<int, int> wishIds = {};
 
       }
     } catch (err) {
@@ -147,9 +154,15 @@ if(this.ApiCall<3){
                 wcUserInfoString ?? token); //await fetchUserData(token);
           }
         }
-        this.dataFull.success= {'success': true,};
-        this.dataFull.wcUserInfo= {'wcUser': wcUserInfo,};
-        this.dataFull.wpUserInfo= {'success': wpUserInfo,};
+        this.dataFull.success = {
+          'success': true,
+        };
+        this.dataFull.wcUserInfo = {
+          'wcUser': wcUserInfo,
+        };
+        this.dataFull.wpUserInfo = {
+          'success': wpUserInfo,
+        };
 
         return this.dataFull;
       }
@@ -159,12 +172,15 @@ if(this.ApiCall<3){
     notifyListeners();
     return this.dataFull;
   }
-  Future fetchCartItems(List<int> ids, ) async {
+
+  Future fetchCartItems(
+    List<int> ids,
+  ) async {
     List<dynamic> fetchedProducts = [];
     try {
-       String includeString = ids.join(',');
+      String includeString = ids.join(',');
       fetchedProducts =
-      await this.wooCommerceAPI.getAsync('products?include=$includeString');
+          await this.wooCommerceAPI.getAsync('products?include=$includeString');
       return fetchedProducts;
     } catch (err) {
       fetchedProducts = [];
@@ -217,19 +233,20 @@ if(this.ApiCall<3){
     };
   }
 
-  Future fetchLatestProducts({bool shouldNotify = false,bool fromSplash=false}) async {
+  Future fetchLatestProducts(
+      {bool shouldNotify = false, bool fromSplash = false}) async {
     this.ApiCall++;
 
     if (this.latestProductIds.length > 0) {
       if (shouldNotify) notifyListeners();
       return true;
     }
-    List<dynamic> productsData =[];
-    if(this.ApiCall<=3) {
-      productsData= await this
+    List<dynamic> productsData = [];
+    if (this.ApiCall <= 3) {
+      productsData = await this
           .wooCommerceAPI
           .getAsync('products?per_page=20&orderby=date&order=desc',
-          apiVersion: 'v3')
+              apiVersion: 'v3')
           .timeout(Duration(seconds: 60))
           .catchError((err) {
         print('fetching latest products: $err');
@@ -246,25 +263,25 @@ if(this.ApiCall<3){
     if (shouldNotify) {
       notifyListeners();
     }
-    if(fromSplash&&this.ApiCall>3){
+    if (fromSplash && this.ApiCall > 3) {
       notifyListeners();
-
     }
     return true;
   }
 
-  Future fetchRatedProducts({bool shouldNotify = false,bool fromSplash=false}) async {
+  Future fetchRatedProducts(
+      {bool shouldNotify = false, bool fromSplash = false}) async {
     if (this.topRatedProductIds.length > 0) {
       if (shouldNotify) notifyListeners();
       return true;
     }
 
-    List<dynamic> productsData =[];
-    if(this.ApiCall<=3) {
-       productsData = await this
+    List<dynamic> productsData = [];
+    if (this.ApiCall <= 3) {
+      productsData = await this
           .wooCommerceAPI
           .getAsync('products?per_page=20&orderby=rating&order=desc',
-          apiVersion: 'v3')
+              apiVersion: 'v3')
           .timeout(Duration(seconds: 60))
           .catchError((err) {
         print('fetching top rated products: $err');
@@ -285,18 +302,19 @@ if(this.ApiCall<3){
     return true;
   }
 
-  Future fetchPopularProducts({bool shouldNotify = false,bool fromSplash=false}) async {
+  Future fetchPopularProducts(
+      {bool shouldNotify = false, bool fromSplash = false}) async {
     if (this.popularProductIds.length > 0) {
       if (shouldNotify) notifyListeners();
       return true;
     }
     this.ApiCall++;
-    List<dynamic> productsData =[];
-    if(this.ApiCall<=3) {
-        productsData =   await this
+    List<dynamic> productsData = [];
+    if (this.ApiCall <= 3) {
+      productsData = await this
           .wooCommerceAPI
           .getAsync('products?per_page=50&orderby=popularity&order=desc',
-          apiVersion: 'v3')
+              apiVersion: 'v3')
           .timeout(Duration(seconds: 60))
           .catchError((err) {
         print('fetching popular products: $err');
@@ -313,9 +331,8 @@ if(this.ApiCall<3){
     if (shouldNotify) {
       notifyListeners();
     }
-    if(fromSplash&&this.ApiCall>3){
+    if (fromSplash && this.ApiCall > 3) {
       notifyListeners();
-
     }
     return true;
   }

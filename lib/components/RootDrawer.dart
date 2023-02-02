@@ -45,7 +45,7 @@ class RootDrawer extends StatelessWidget {
                 .values
                 .toList();
         return Drawer(
-          backgroundColor:  Styles.ColorWhite ,
+          backgroundColor: Styles.ColorWhite,
           child: ListView(
             children: <Widget>[
               Container(
@@ -65,62 +65,54 @@ class RootDrawer extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     // mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
-
                       SizedBox(height: 46.h),
                       isLoggedIn
                           ? Expanded(
-                              child:
-                                  Text(
-                                      userManager.wcUserInfo!['username'] ??
-                                          'Username not found',
-                                      style: Styles.boldTextStyle.copyWith(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: Styles.fontSize20
-                                      )),
-                                  // Text(
-                                  //     userManager.wcUserInfo!['email'] ??
-                                  //         'Email not found',
-                                  //     style: _whiteText)
-
+                              child: Text(
+                                  userManager.wcUserInfo!['username'] ??
+                                      'Username not found',
+                                  style: Styles.boldTextStyle.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: Styles.fontSize20)),
+                              // Text(
+                              //     userManager.wcUserInfo!['email'] ??
+                              //         'Email not found',
+                              //     style: _whiteText)
                             )
-                          : Text('Guest', style:  Styles.boldTextStyle.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: Styles.fontSize20
-                      )),  isLoggedIn
+                          : Text('Guest',
+                              style: Styles.boldTextStyle.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: Styles.fontSize20)),
+                      isLoggedIn
                           ? Expanded(
-                              child:
-                                  Text(
-                                     "active pharmacy"??
-                                          'Username not found',
-                                      style: Styles.boldTextStyle.copyWith(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: Styles.fontSize13
-                                      )),
-                                  // Text(
-                                  //     userManager.wcUserInfo!['email'] ??
-                                  //         'Email not found',
-                                  //     style: _whiteText)
-
+                              child: Text(
+                                  "active pharmacy" ?? 'Username not found',
+                                  style: Styles.boldTextStyle.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: Styles.fontSize13)),
+                              // Text(
+                              //     userManager.wcUserInfo!['email'] ??
+                              //         'Email not found',
+                              //     style: _whiteText)
                             )
-                          : Text('Guest', style:  Styles.boldTextStyle.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: Styles.fontSize20
-                      )),
+                          : Text('Guest',
+                              style: Styles.boldTextStyle.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: Styles.fontSize20)),
                       SizedBox(height: 36.h),
-
                     ],
                   ),
                 ),
               ),
               ListTile(
                 title: Text('my account'),
-                leading:
-                        SvgPicture.asset(Assets.SVGAccountDrawer,width: 26.w,),
-
-
+                leading: SvgPicture.asset(
+                  Assets.SVGAccountDrawer,
+                  width: 26.w,
+                ),
                 onTap: () {
                   if (!isLoggedIn) {
-                    Scaffold.of(context).showSnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Please Login to track your Orders'),
                       ),
@@ -139,7 +131,10 @@ class RootDrawer extends StatelessWidget {
               ),
               ListTile(
                 title: Text('my pharmacy'),
-                leading:   SvgPicture.asset(Assets.SVGmypharmacy,width: 26.w,),
+                leading: SvgPicture.asset(
+                  Assets.SVGmypharmacy,
+                  width: 26.w,
+                ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.push(
@@ -150,8 +145,11 @@ class RootDrawer extends StatelessWidget {
               ),
               ListTile(
                 title: Text('stock alert'),
-                leading: SvgPicture.asset(Assets.SVGStockAlert,width: 26.w,),
-                 onTap: () {
+                leading: SvgPicture.asset(
+                  Assets.SVGStockAlert,
+                  width: 26.w,
+                ),
+                onTap: () {
                   Navigator.pop(context);
                   Navigator.push(
                     context,
@@ -161,8 +159,11 @@ class RootDrawer extends StatelessWidget {
               ),
               ListTile(
                 title: Text('payment request'),
-                leading: SvgPicture.asset(Assets.SVGPaymentMethod,width: 26.w,),
-                 onTap: () {
+                leading: SvgPicture.asset(
+                  Assets.SVGPaymentMethod,
+                  width: 26.w,
+                ),
+                onTap: () {
                   Navigator.pop(context);
                   Navigator.push(
                     context,
@@ -172,8 +173,11 @@ class RootDrawer extends StatelessWidget {
               ),
               ListTile(
                 title: Text('contact'),
-                leading: SvgPicture.asset(Assets.SVGContacts,width: 26.w,),
-                 onTap: () {
+                leading: SvgPicture.asset(
+                  Assets.SVGContacts,
+                  width: 26.w,
+                ),
+                onTap: () {
                   Navigator.pop(context);
                   Navigator.push(
                     context,
@@ -181,8 +185,6 @@ class RootDrawer extends StatelessWidget {
                   );
                 },
               ),
-
-
               isLoggedIn
                   ? ListTile(
                       title: Text('Logout'),

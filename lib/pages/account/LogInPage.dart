@@ -13,13 +13,12 @@ import 'package:grodudes/state/user_state.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
- import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/configurations/assets.dart';
 import '../../core/utils.dart';
 import '../../routing/route_paths.dart';
 import '../navigation.dart';
-
 
 final InputDecoration defaultTextFieldDecoration = InputDecoration(
   labelStyle: TextStyle(color: Colors.grey[600]),
@@ -55,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
   List<String> Languages = [
     "English",
     "العربية",
-   ];
+  ];
   List<String> selectedLanguges = [];
   String _chosenValue = "English";
   int _selectedIndex = 0;
@@ -64,10 +63,8 @@ class _LoginPageState extends State<LoginPage> {
     _spf = await SharedPreferences.getInstance();
 
     setState(() {
-      _selectedIndex=_spf.getInt(SharedPreferencesKeys.LanguageIndex)??0;
-      _chosenValue=  getStringValue(_selectedIndex+1);
-
-
+      _selectedIndex = _spf.getInt(SharedPreferencesKeys.LanguageIndex) ?? 0;
+      _chosenValue = getStringValue(_selectedIndex + 1);
     });
   }
 
@@ -94,24 +91,16 @@ class _LoginPageState extends State<LoginPage> {
   Widget getFormInputField(
       String title, TextEditingController inputController) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return
-
-
-      Container(
+    return Container(
       height: 60.h,
-      margin: EdgeInsets.symmetric(vertical: 0, horizontal:37.w),
-
-      decoration:
-     Styles.textFieldDecoration,
-      child:
-
-
-      TextField(
+      margin: EdgeInsets.symmetric(vertical: 0, horizontal: 37.w),
+      decoration: Styles.textFieldDecoration,
+      child: TextField(
         decoration: Styles.LoginFieldDecoration(
           radius: 22.r,
           // labelText: title,
           hint: title,
-            // color: Styles.colorPrimary          // prefixIcon: title == S.of(context).username
+          // color: Styles.colorPrimary          // prefixIcon: title == S.of(context).username
           //     ? Icon(Icons.account_circle, color: Colors.grey[700])
           //     : title == S.of(context).email
           //         ? Icon(Icons.email, color: Colors.grey[700])
@@ -119,12 +108,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
         controller: inputController,
 
-          // style: TextStyle(fontSize: 20),
+        // style: TextStyle(fontSize: 20),
 
-        style:Styles.lightTextStyle.copyWith(
+        style: Styles.lightTextStyle.copyWith(
             fontSize: Styles.fontSize14,
             fontWeight: FontWeight.w400,
-            color:Styles.FontColorBlackDark  ),
+            color: Styles.FontColorBlackDark),
       ),
     );
   }
@@ -140,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
       valuesAvailable = false;
     }
     if (valuesAvailable == false) {
-      Scaffold.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(S.of(context).pleaseFillAllTheFields),
         ),
@@ -153,17 +142,16 @@ class _LoginPageState extends State<LoginPage> {
               this._usernameController.text, this._passwordController.text)
           .then((value) {
         if (value) {
-          Utils.pushReplacementNavigateTo(context,
-               //false,
-              RoutePaths.NavigationScreen,
-              // arguments: 0
-
-
+          Utils.pushReplacementNavigateTo(
+            context,
+            //false,
+            RoutePaths.NavigationScreen,
+            // arguments: 0
           );
 
           // Navigator.pushReplacementNamed(context, '/NavigationScreen');
 
-                  }
+        }
       }).catchError((err) {
         print(err);
       });
@@ -207,228 +195,224 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      backgroundColor: Styles.colorBackGround ,
-        body:Container(
-        height:MediaQuery.of(context).size.height,
-        child:
+        backgroundColor: Styles.colorBackGround,
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Form(
+              child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  height: 137.h,
+                ),
 
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 37.w),
+                  // height: 40.h,
+                  // width: 420.w,
+                  child: Center(
+                    child: Text("Pharma Logo",
+                        textAlign: TextAlign.center,
+                        style: Styles.boldTextStyle.copyWith(
+                            fontSize: Styles.fontSize31,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xff96C43D))),
+                  ),
+                ),
+                SizedBox(
+                  height: 57.h,
+                ),
 
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 37.w),
+                  // height: 40.h,
+                  // width: 420.w,
+                  child: Text(
+                    this.action == 'login'
+                        ? "welcome" //S.of(context).welcomeback
+                        : this.action == 'forget password'
+                            ? S.of(context).forgetPassword
+                            : "welcome", //S.of(context).welcome,
+                    style: Styles.boldTextStyle.copyWith(
+                        fontSize: Styles.fontSize24,
+                        fontWeight: FontWeight.w700,
+                        color: Styles.FontColorBlackDark),
+                  ),
+                ),
+                // SizedBox(height: 5.h),
 
-
-
-        Form(
-          child:
-          SingleChildScrollView
-
-            (
-
-            child:
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              SizedBox(height: 137.h,),
-
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 37.w),
-                 // height: 40.h,
-                // width: 420.w,
-                child:
-Center(child:
-                Text(
-               "Pharma Logo",textAlign: TextAlign.center,
-                style: Styles.boldTextStyle.copyWith(
-                    fontSize: Styles.fontSize31,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xff96C43D))),
-              ),),
-              SizedBox(height: 57.h,),
-
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 37.w),
-                 // height: 40.h,
-                // width: 420.w,
-                child: Text(
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 37.w),
+                  // height: 40.h,
+                  // width: 420.w,
+                  child: Text(
+                    this.action == 'login'
+                        ? "login" //S.of(context).signInToYourAccount
+                        : this.action == 'forget password'
+                            ? S.of(context).forgetPassword
+                            : "create account", //S.of(context).signInOrCreateNewAccount,
+                    style: Styles.regularTextStyle.copyWith(
+                        fontSize: Styles.fontSize20,
+                        fontWeight: FontWeight.w600,
+                        color: Styles.FontColorBlackDark),
+                  ),
+                ),
+                SizedBox(height: 31.h),
+                if (this.action != 'forget password')
+                  getFormInputField(
+                      S.of(context).username, this._usernameController),
+                SizedBox(height: 35.h),
+                if (this.action != 'forget password')
+                  _PasswordFromInputRow(this._passwordController),
                 this.action == 'login'
-                    ? "welcome"//S.of(context).welcomeback
-                    : this.action == 'forget password'
-                        ? S.of(context).forgetPassword
-                        : "welcome",//S.of(context).welcome,
-                style: Styles.boldTextStyle.copyWith(
-                    fontSize: Styles.fontSize24,
-                    fontWeight: FontWeight.w700,
-                    color: Styles.FontColorBlackDark),
-              ),),
-              // SizedBox(height: 5.h),
+                    ? SizedBox(height: 0)
+                    : this.action == 'forget Password'
+                        ? SizedBox(height: 0)
+                        : SizedBox(height: 35.h),
+                this.action == 'login'
+                    ? SizedBox(height: 0)
+                    : this.action == 'forget Password'
+                        ? SizedBox(height: 0)
+                        : getFormInputField(
+                            S.of(context).email, this._emailController),
+                SizedBox(height: 33.h),
 
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 37.w),
-                // height: 40.h,
-                // width: 420.w,
-                child: Text(
-                  this.action == 'login'
-                      ? "login"//S.of(context).signInToYourAccount
-                      : this.action == 'forget password'
-                      ? S.of(context).forgetPassword
-                      : "create account",//S.of(context).signInOrCreateNewAccount,
-                  style:
-                  Styles.regularTextStyle.copyWith(fontSize: Styles.fontSize20,
-                      fontWeight: FontWeight.w600,
-                      color: Styles.FontColorBlackDark),
-                ),),
-              SizedBox(height: 31.h),
-              if (this.action != 'forget password')
-                getFormInputField(
-                    S.of(context).username, this._usernameController),
-              SizedBox(height: 35.h),
-              if (this.action != 'forget password')
-                _PasswordFromInputRow(this._passwordController),
-              this.action == 'login'
-                  ? SizedBox(height: 0)
-                  : this.action == 'forget Password'
-                      ? SizedBox(height: 0)
-                      : SizedBox(height: 35.h),
-              this.action == 'login'
-                  ? SizedBox(height: 0)
-                  : this.action == 'forget Password'
-                      ? SizedBox(height: 0)
-                      : getFormInputField(
-                          S.of(context).email, this._emailController),
-              SizedBox(height: 33.h),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
 // SizedBox(width:44.w,),
 //                 if (this.action == 'login')
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: <Widget>[
-                  //
-                  //     InkWell(
-                  //         onTap: (){
-                  //           setState(() {
-                  //             this.action = 'login';
-                  //             _launchInBrowser(Uri(
-                  //                 scheme: 'https',
-                  //                 host: 'majalpharma.com',
-                  //                 path: "/my-account/lost-password/"));
-                  //           });
-                  //         },
-                  //         child:
-                  //     Container(
-                  //       width: 170.w,
-                  //         child:
-                  //     Text(
-                  //       S.of(context).forgetPassword,
-                  //       style: Styles.regularTextStyle.copyWith(
-                  //         fontSize: Styles.fontSize17,
-                  //         color: Styles.loginFontColor
-                  //       ),
-                  //     ))),
-                  //
-                  //      SizedBox(width:24.w,),
-                  //   ],
-                  // ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: <Widget>[
+                    //
+                    //     InkWell(
+                    //         onTap: (){
+                    //           setState(() {
+                    //             this.action = 'login';
+                    //             _launchInBrowser(Uri(
+                    //                 scheme: 'https',
+                    //                 host: 'majalpharma.com',
+                    //                 path: "/my-account/lost-password/"));
+                    //           });
+                    //         },
+                    //         child:
+                    //     Container(
+                    //       width: 170.w,
+                    //         child:
+                    //     Text(
+                    //       S.of(context).forgetPassword,
+                    //       style: Styles.regularTextStyle.copyWith(
+                    //         fontSize: Styles.fontSize17,
+                    //         color: Styles.loginFontColor
+                    //       ),
+                    //     ))),
+                    //
+                    //      SizedBox(width:24.w,),
+                    //   ],
+                    // ),
 
-Expanded(child:
-     InkWell(onTap: _handleFormSubmit,
-    child: Container(
-         height: 60.h,
-        margin: EdgeInsets.symmetric(vertical: 0, horizontal:37.w),
+                    Expanded(
+                        child: InkWell(
+                            onTap: _handleFormSubmit,
+                            child: Container(
+                                height: 60.h,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 37.w),
 
-        // height: 60.h,
-    decoration: Styles.roundedDecoration.copyWith(
-    color: Styles.colorPrimary,
-    borderRadius: BorderRadius.all(
-    Radius.circular(23.r),
-    ),
-    ),
-    child:
-    Center(child: Text(
-                  this.action == 'login'
-                      ? 'Login'//S.of(context).signIn
-                      : this.action == 'forget password'
-                          ? S.of(context).resetPassword
-                          : S.of(context).signUp,
-                  style: Styles.meduimTextStyle.copyWith(fontSize:Styles.fontSize20,
-                      fontWeight: FontWeight.w700,
-                      color: Styles.ColorWhite ),
+                                // height: 60.h,
+                                decoration: Styles.roundedDecoration.copyWith(
+                                  color: Styles.colorPrimary,
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(23.r),
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    this.action == 'login'
+                                        ? 'Login' //S.of(context).signIn
+                                        : this.action == 'forget password'
+                                            ? S.of(context).resetPassword
+                                            : S.of(context).signUp,
+                                    style: Styles.meduimTextStyle.copyWith(
+                                        fontSize: Styles.fontSize20,
+                                        fontWeight: FontWeight.w700,
+                                        color: Styles.ColorWhite),
+                                  ),
+                                ))))
+                    // SizedBox(width:37.w,),
+                  ],
                 ),
-              )
-    )
-     ))
-                  // SizedBox(width:37.w,),
-
-              ],),
-              //
-              Provider.of<UserManager>(context).getLogInStatus() ==
-                  logInStates.logInFailed
-                  ?  SizedBox(height:20.h):SizedBox(height:0),
-              Provider.of<UserManager>(context).getLogInStatus() ==
-                      logInStates.logInFailed
-                  ? Center(child: _getErrorPrompt())
-                  : SizedBox(height: 0.h),
- SizedBox(height: 21.h,),
+                //
+                Provider.of<UserManager>(context).getLogInStatus() ==
+                        logInStates.logInFailed
+                    ? SizedBox(height: 20.h)
+                    : SizedBox(height: 0),
+                Provider.of<UserManager>(context).getLogInStatus() ==
+                        logInStates.logInFailed
+                    ? Center(child: _getErrorPrompt())
+                    : SizedBox(height: 0.h),
+                SizedBox(
+                  height: 21.h,
+                ),
 // if(this.action == 'register')SizedBox(height: 40.h,),
-              Center(child: Container(
-                // padding: EdgeInsets.symmetric(horizontal:20.w ),
-                child:
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  // SizedBox(width:62.w,),
-                  Text(
-                    this.action == 'login'
-                        ? S.of(context).youDontHaveAccount
-                        : this.action == 'forget password'
-                        ? ""
-                        : S.of(context).alreadyHaveAccountSignin,
-                    style: Styles.regularTextStyle.copyWith(
-                        fontSize: Styles.fontSize16,
-                        fontWeight: FontWeight.w500,
-                        color: Styles.colorFontColorDark),
+                Center(
+                    child: Container(
+                  // padding: EdgeInsets.symmetric(horizontal:20.w ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      // SizedBox(width:62.w,),
+                      Text(
+                        this.action == 'login'
+                            ? S.of(context).youDontHaveAccount
+                            : this.action == 'forget password'
+                                ? ""
+                                : S.of(context).alreadyHaveAccountSignin,
+                        style: Styles.regularTextStyle.copyWith(
+                            fontSize: Styles.fontSize16,
+                            fontWeight: FontWeight.w500,
+                            color: Styles.colorFontColorDark),
+                      ),
+                      MaterialButton(
+                        child: Text(
+                          this.action == 'login'
+                              ? "Create account" //S.of(context).signUp
+                              : this.action == 'forget password'
+                                  ? ""
+                                  : S.of(context).signIn,
+                          style: Styles.meduimTextStyle.copyWith(
+                              fontSize: Styles.fontSize16,
+                              fontWeight: FontWeight.w500,
+                              // color: Styles.colorFontColorDark
+                              color: Color(0xff1948EF)),
+                        ),
+                        onPressed: () => setState(() {
+                          this.action = this.action == 'login'
+                              ? 'register'
+                              : this.action == "forget password"
+                                  ? 'register'
+                                  : 'login';
+                        }),
+                      )
+                    ],
                   ),
-                  MaterialButton(
-                    child: Text(
-                      this.action == 'login'
-                          ? "Create account"//S.of(context).signUp
-                          : this.action == 'forget password'
-                          ? ""
-                          : S.of(context).signIn,
-                      style:Styles.meduimTextStyle.copyWith(
-                          fontSize: Styles.fontSize16,
-                          fontWeight: FontWeight.w500,
-                          // color: Styles.colorFontColorDark
-                          color: Color(0xff1948EF)),
-                    ),
-                    onPressed: () => setState(() {
-                      this.action = this.action == 'login'
-                          ? 'register'
-                          : this.action == "forget password"
-                          ? 'register'
-                          : 'login';
-                    }),
-                  )
-                ],
-              ),)),
-              SizedBox(height: 52.h,)
-              // SizedBox(height: 10.h),
-              // _buidLanguage()
-            ],
-          ),
+                )),
+                SizedBox(
+                  height: 52.h,
+                )
+                // SizedBox(height: 10.h),
+                // _buidLanguage()
+              ],
+            ),
           )),
-    
-        )
-    );
+        ));
   }
-
-
-
 
   getStringValue(int index) {
     switch (index) {
@@ -485,22 +469,16 @@ class __PasswordFromInputRowState extends State<_PasswordFromInputRow> {
     return Container(
       width: 353.w,
       height: 60.h,
-      margin: EdgeInsets.symmetric(vertical: 0, horizontal:37.w),
-
+      margin: EdgeInsets.symmetric(vertical: 0, horizontal: 37.w),
       decoration: Styles.textFieldDecoration,
-      child:
-
-
-      TextField(
-        obscureText:isObscured,
-        decoration:
-
-        Styles.LoginFieldDecoration().copyWith(
-
+      child: TextField(
+          obscureText: isObscured,
+          decoration: Styles.LoginFieldDecoration().copyWith(
             hintText: title,
             hintStyle: Styles.lightTextStyle.copyWith(
                 color: Styles.FontColorBlackDark,
-                fontSize: Styles.fontSize14,fontWeight: FontWeight.w400),
+                fontSize: Styles.fontSize14,
+                fontWeight: FontWeight.w400),
 
             // errorBorder: Styles.roundedOutlineInputBorder(radius: 18.r)
             //     .copyWith(borderSide: BorderSide(color: Colors.red)),
@@ -511,20 +489,19 @@ class __PasswordFromInputRowState extends State<_PasswordFromInputRow> {
             // filled: true,
             // // fillColor:  Styles.colorBackGround,
 
-
-           suffixIcon: GestureDetector(
-            child: Icon(Icons.remove_red_eye,
-                color: !isObscured?Styles.FontColorBlackDark:Styles.FontColorBlackDark.withOpacity(0.5)),
-            onTap: () => setState(() => this.isObscured = !this.isObscured),
+            suffixIcon: GestureDetector(
+              child: Icon(Icons.remove_red_eye,
+                  color: !isObscured
+                      ? Styles.FontColorBlackDark
+                      : Styles.FontColorBlackDark.withOpacity(0.5)),
+              onTap: () => setState(() => this.isObscured = !this.isObscured),
+            ),
           ),
-        ),
-        controller: widget.inputController,
-
-          style:Styles.lightTextStyle.copyWith(
+          controller: widget.inputController,
+          style: Styles.lightTextStyle.copyWith(
               fontSize: Styles.fontSize14,
               fontWeight: FontWeight.w400,
-              color:Styles.FontColorBlackDark  )
-      ),
+              color: Styles.FontColorBlackDark)),
     );
   }
 }

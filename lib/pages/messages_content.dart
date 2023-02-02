@@ -35,14 +35,13 @@ class MessageContent extends StatefulWidget {
   _MessageContentState createState() => _MessageContentState();
 }
 
-class _MessageContentState extends State<MessageContent>    with SingleTickerProviderStateMixin {
+class _MessageContentState extends State<MessageContent>
+    with SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   TabController? _tabController;
 
-
   _openLatestProductsPage(productIds) {
-
     // Utils.pushNewScreenWithRouteSettings(context,
     //   settings:
     //   RouteSettings(name: RoutePaths.HomeSpecialProductsPage),
@@ -86,7 +85,6 @@ class _MessageContentState extends State<MessageContent>    with SingleTickerPro
       CupertinoPageRoute(
         builder: (context) => HomeSpecialProductsPage(
           S.of(context).popularProducts,
-
           productIds,
           () => Provider.of<ProductsManager>(context, listen: false)
               .fetchPopularProducts(shouldNotify: true),
@@ -95,107 +93,78 @@ class _MessageContentState extends State<MessageContent>    with SingleTickerPro
     );
   }
 
-
   @override
   initState() {
-
     this._tabController =
-    TabController(initialIndex: 0, length: 2, vsync: this);
-     super.initState();
+        TabController(initialIndex: 0, length: 2, vsync: this);
+    super.initState();
   }
 
   @override
   void dispose() {
-
     this._tabController!.dispose();
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-    return
-      Container(child:
-      Consumer<ProductsManager>(
+    return Container(child: Consumer<ProductsManager>(
       builder: (context, productsManager, child) {
         double carouselHeight = MediaQuery.of(context).size.width * 0.344;
-        return
-
-          Column(
-          // cacheExtent: 2000,
-          // shrinkWrap: true,
+        return Column(
+            // cacheExtent: 2000,
+            // shrinkWrap: true,
             mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-
-
-
-
-
-                    Container(
-                      height: 47.h,
-                       color: Colors.white,
-                      child:
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child:
-
-                          TabBar(
-
-                            controller: this._tabController,
-                            // isScrollable: true,
-                            indicatorColor: Styles.colorPrimary,
-                            indicatorWeight: 4,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                height: 47.h,
+                color: Colors.white,
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: TabBar(
+                      controller: this._tabController,
+                      // isScrollable: true,
+                      indicatorColor: Styles.colorPrimary,
+                      indicatorWeight: 4,
 // automaticIndicatorColorAdjustment: true,
-                            // indicatorSize: TabBarIndicatorSize.tab,
-                            labelColor: Styles.colorPrimary,
-                            labelStyle: TextStyle(fontSize: Styles.fontSize22,
+                      // indicatorSize: TabBarIndicatorSize.tab,
+                      labelColor: Styles.colorPrimary,
+                      labelStyle: TextStyle(
+                          fontSize: Styles.fontSize22,
+                          fontFamily: Styles.FontFamilyRobotoMedium,
+                          fontWeight: FontWeight.w500),
 
-                                fontFamily: Styles.FontFamilyRobotoMedium,
-                                fontWeight: FontWeight.w500),
+                      unselectedLabelColor:
+                          Styles.colorUnselectTabFontTitle.withOpacity(0.62),
+                      unselectedLabelStyle: TextStyle(
+                          fontSize: Styles.fontSize22,
+                          fontFamily: Styles.FontFamilyRobotoMedium,
+                          fontWeight: FontWeight.w500),
 
-                            unselectedLabelColor: Styles.colorUnselectTabFontTitle.withOpacity(0.62),
-                            unselectedLabelStyle: TextStyle(fontSize: Styles.fontSize22,
-                                fontFamily: Styles.FontFamilyRobotoMedium,
-                                fontWeight: FontWeight.w500),
-
-                            tabs: [
-                              Tab(
-                                  child:Text(S.of(context).home)),
-                              Tab(
-                                  child: Text(S.of(context).products)),
-
-                            ],
-                          )
-                      ),),
-                 Expanded(
-                    child:
-                    Column(children: [
-                        Expanded(child:
-                      TabBarView(
-                        controller: this._tabController,
-                        children: [
-                          TopProductTab( ),
-                          TopOrderTab(),
-                         ],
-                      )),
-
-
-
-
-
-
-
-           ],
-        )
-                )
-        ]
-          )
-        ;
+                      tabs: [
+                        Tab(child: Text(S.of(context).home)),
+                        Tab(child: Text(S.of(context).products)),
+                      ],
+                    )),
+              ),
+              Expanded(
+                  child: Column(
+                children: [
+                  Expanded(
+                      child: TabBarView(
+                    controller: this._tabController,
+                    children: [
+                      TopProductTab(),
+                      TopOrderTab(),
+                    ],
+                  )),
+                ],
+              ))
+            ]);
       },
       // child: ,
-      ));
+    ));
   }
 }
 
@@ -213,7 +182,10 @@ class _HomeCategoryState extends State<HomeCategory> {
       future: widget.productsManager.fetchAllParentCategories(),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done)
-          return Center(child: CircularProgressIndicator(color: Styles.colorPrimary,));
+          return Center(
+              child: CircularProgressIndicator(
+            color: Styles.colorPrimary,
+          ));
         if (snapshot.hasData) {
           List<Category> categories =
               widget.productsManager.categories.values.toList();
@@ -240,7 +212,7 @@ class _HomeCategoryState extends State<HomeCategory> {
             child: Column(
               children: [
                 Text(S.of(context).failedToFetchCategories),
-                RaisedButton(
+                ElevatedButton(
                   child: Text(
                     S.of(context).retry,
                     style: TextStyle(color: Colors.white),
@@ -251,7 +223,10 @@ class _HomeCategoryState extends State<HomeCategory> {
             ),
           );
         }
-        return Center(child: CircularProgressIndicator(color: Styles.colorPrimary,));
+        return Center(
+            child: CircularProgressIndicator(
+          color: Styles.colorPrimary,
+        ));
       },
     );
   }
@@ -275,7 +250,7 @@ class _SpecialProductsLoadError extends StatelessWidget {
           alignment: Alignment.center,
           width: MediaQuery.of(context).size.width * 0.6,
           child: Text(S.of(context).errorMessage,
-              textAlign: TextAlign.center, style:Styles.boldTextStyle),
+              textAlign: TextAlign.center, style: Styles.boldTextStyle),
         ),
       ],
     );
@@ -288,35 +263,28 @@ class _HeaderRow extends StatelessWidget {
   _HeaderRow(this.title, this.cb);
   @override
   Widget build(BuildContext context) {
-    return Container(height: 24.h,
+    return Container(
+      height: 24.h,
       // color: Colors.red,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text(
-            title,
-            style: Styles.boldTextStyle.copyWith(
-
-                fontSize: Styles.fontSize20
-            )
-          ),
+          Text(title,
+              style:
+                  Styles.boldTextStyle.copyWith(fontSize: Styles.fontSize20)),
           Expanded(child: Container()),
           InkWell(
-            child:Container(
-              height: 30.h,
-            padding: EdgeInsets.all(0),
-            child: Text(
-              S.of(context).seeAll,
-              style: Styles.regularTextStyle.copyWith(
-                color: Styles.colorFontTitle.withOpacity(0.59),
-                fontSize: Styles.fontSize15
-              )
-            )),
+            child: Container(
+                height: 30.h,
+                padding: EdgeInsets.all(0),
+                child: Text(S.of(context).seeAll,
+                    style: Styles.regularTextStyle.copyWith(
+                        color: Styles.colorFontTitle.withOpacity(0.59),
+                        fontSize: Styles.fontSize15))),
             onTap: () {
-             cb( );
-
+              cb();
             },
           ),
         ],
@@ -329,7 +297,10 @@ class _HorizontalProductRow extends StatelessWidget {
   final Set<int> productIds;
   final Map<int, Product> products;
   final bool isFeature;
-  _HorizontalProductRow({required this.productIds, required this.products,this.isFeature:false});
+  _HorizontalProductRow(
+      {required this.productIds,
+      required this.products,
+      this.isFeature: false});
 
   @override
   Widget build(BuildContext context) {
@@ -343,43 +314,34 @@ class _HorizontalProductRow extends StatelessWidget {
     }
     if (productIds.length == 0) {
       return Center(
-        child:CircularProgressIndicator(color: Styles.colorPrimary,)
-      );
+          child: CircularProgressIndicator(
+        color: Styles.colorPrimary,
+      ));
     }
-    return
-      isFeature? Container(
-          height: 510.h,
-          padding: EdgeInsets.symmetric(horizontal: 18.w),
-          child:
-      ListView.separated(
-
-        separatorBuilder: (context, index) => SizedBox(height: 28.h,),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-
-      itemCount: productIds.length,// > 4 ? 4 : productIds.length,
-      itemBuilder: (context, index) =>
-
-
-          ProductCardAumet(products[productIds.elementAt(index)]!))
-      ):
-
-
-      Container(
-        height: 239.h ,
-        child:
-        ListView.separated(
-        separatorBuilder: (context, index) => SizedBox(width: 28.w,),
-      scrollDirection: Axis.horizontal,
-      shrinkWrap: true,
-      itemCount: productIds.length > 4 ? 4 : productIds.length,
-      itemBuilder: (context, index) =>
-
-
-
-        ProductCard(products[productIds.elementAt(index)]!),
-
-    )
-      );
+    return isFeature
+        ? Container(
+            height: 510.h,
+            padding: EdgeInsets.symmetric(horizontal: 18.w),
+            child: ListView.separated(
+                separatorBuilder: (context, index) => SizedBox(
+                      height: 28.h,
+                    ),
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: productIds.length, // > 4 ? 4 : productIds.length,
+                itemBuilder: (context, index) =>
+                    ProductCardAumet(products[productIds.elementAt(index)]!)))
+        : Container(
+            height: 239.h,
+            child: ListView.separated(
+              separatorBuilder: (context, index) => SizedBox(
+                width: 28.w,
+              ),
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: productIds.length > 4 ? 4 : productIds.length,
+              itemBuilder: (context, index) =>
+                  ProductCard(products[productIds.elementAt(index)]!),
+            ));
   }
 }

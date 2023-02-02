@@ -51,92 +51,89 @@ class _HomeSpecialProductsPageState extends State<HomeSpecialProductsPage> {
     Map<int, Product> products =
         Provider.of<ProductsManager>(context, listen: false).products;
     return Scaffold(
-      backgroundColor: Styles.colorBackGround,
-      // appBar: AppBar(
-      //     iconTheme: IconThemeData(
-      //       color: Colors.black, //change your color here
-      //     ),
-      //     backgroundColor: Styles.colorBackGround,
-      //     title: Text(
-      //       widget.title,
-      //       style: Styles.appBarTextStyle,
-      //     )),
-      body:
-
-
-      SafeArea(child:
-
-    // SingleChildScrollView  (child:
-
-    Column(
-    mainAxisSize: MainAxisSize.min,
-      // scrollDirection: Axis.vertical,
-      children: [
-      MajalAppBar(
-      withBack: true,
-
-    ),
-
-    SizedBox(child:
-    Center(
-    child: Text(widget.title,
-    style: Styles.boldTextStyle,),
-    )
-    ),
-SizedBox(height: 38.h,),
-
-     Expanded(child:
-      _isLoading
-          ? Container(
-              color: Colors.white,
-              child: Center(
-                child: CircularProgressIndicator(color: Styles.colorPrimary,),
-              ),
-            )
-          : this.widget.productIds.length == 0 && this.requestedOnce
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(S.of(context).failedToLoadProducts),
-                      RaisedButton(
-                        onPressed: _getData,
-                        child: Text(
-                          S.of(context).retry,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              :
-
-
-        Expanded(child:   Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+        backgroundColor: Styles.colorBackGround,
+        // appBar: AppBar(
+        //     iconTheme: IconThemeData(
+        //       color: Colors.black, //change your color here
+        //     ),
+        //     backgroundColor: Styles.colorBackGround,
+        //     title: Text(
+        //       widget.title,
+        //       style: Styles.appBarTextStyle,
+        //     )),
+        body: SafeArea(
             child:
-      GridView.builder(
-        shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      childAspectRatio: 0.85,
-      crossAxisSpacing: 19.w,
-      mainAxisSpacing: 20.h,
-    ),
-    // padding: EdgeInsets.all(16),
-    itemCount: widget.productIds.length,
-    itemBuilder: (context, index) {
-    return  ProductListTile(
-          products[widget.productIds.elementAt(index)]!,withAction: false,);
-                  },
 
+                // SingleChildScrollView  (child:
+
+                Column(mainAxisSize: MainAxisSize.min,
+                    // scrollDirection: Axis.vertical,
+                    children: [
+              MajalAppBar(
+                withBack: true,
+              ),
+              SizedBox(
+                  child: Center(
+                child: Text(
+                  widget.title,
+                  style: Styles.boldTextStyle,
                 ),
-    )))
-    ]
-    )
-    )
-    // )
-    );
+              )),
+              SizedBox(
+                height: 38.h,
+              ),
+              Expanded(
+                  child: _isLoading
+                      ? Container(
+                          color: Colors.white,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Styles.colorPrimary,
+                            ),
+                          ),
+                        )
+                      : this.widget.productIds.length == 0 && this.requestedOnce
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(S.of(context).failedToLoadProducts),
+                                  ElevatedButton(
+                                    onPressed: _getData,
+                                    child: Text(
+                                      S.of(context).retry,
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          : Expanded(
+                              child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              child: GridView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.85,
+                                  crossAxisSpacing: 19.w,
+                                  mainAxisSpacing: 20.h,
+                                ),
+                                // padding: EdgeInsets.all(16),
+                                itemCount: widget.productIds.length,
+                                itemBuilder: (context, index) {
+                                  return ProductListTile(
+                                    products[
+                                        widget.productIds.elementAt(index)]!,
+                                    withAction: false,
+                                  );
+                                },
+                              ),
+                            )))
+            ]))
+        // )
+        );
   }
 }

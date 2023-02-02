@@ -22,7 +22,8 @@ class UserManager with ChangeNotifier {
   UserManager() {
     this.wcUserInfo = {};
     this.wpUserInfo = {};
-    this._secureStorage = FlutterSecureStorage();  var _logInStatus;
+    this._secureStorage = FlutterSecureStorage();
+    var _logInStatus;
 
     this._logInStatus = logInStates.loggedOut;
     this._wooCommApi = WooCommerceAPI(
@@ -42,6 +43,7 @@ class UserManager with ChangeNotifier {
 
   initializeUser(
       Map<String, dynamic> wpUserInfo, Map<String, dynamic> wcUserInfo) {
+    print(wcUserInfo);
     if (wcUserInfo == null || wcUserInfo['id'] == null) return;
     if (this.wcUserInfo != null && this.wcUserInfo!['id'] != null) return;
     this.wpUserInfo = wpUserInfo;
@@ -51,8 +53,6 @@ class UserManager with ChangeNotifier {
 
   Future logInToWordpress(String username, String password) async {
     try {
-
-
       if (isLoggedIn()) return true;
       if (this._logInStatus != logInStates.pending) {
         this._logInStatus = logInStates.pending;
@@ -85,6 +85,9 @@ class UserManager with ChangeNotifier {
       if (success != null && success) {
         this._logInStatus =
             await _storeUserDataLocally().catchError((err) => print(err));
+        this._secureStorage.write(
+            key: "auth_data",
+            value: base64.encode(utf8.encode("$username:$password")));
       } else {
         this._logInStatus = logInStates.logInFailed;
         _createLoginErrorResponse({});

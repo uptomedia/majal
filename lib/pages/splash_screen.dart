@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
- import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grodudes/core/configurations/styles.dart';
 import 'package:grodudes/core/loader_screen.dart';
@@ -38,20 +38,17 @@ class _SplashcreenState extends State<SplashScreen> {
   int APICall = 0;
   // AppStateModel? appState;
   @override
-    initState()   {
+  initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((_) =>
         Provider.of<ProductsManager>(context, listen: false)
-            .fetchAllParentCategories(shouldupdate: false,fromSplash: true));
+            .fetchAllParentCategories(shouldupdate: false, fromSplash: true));
     WidgetsBinding.instance?.addPostFrameCallback((_) =>
-
         Provider.of<ProductsManager>(context, listen: false)
-            .fetchLatestProducts(shouldNotify: false,fromSplash: true));
+            .fetchLatestProducts(shouldNotify: false, fromSplash: true));
     WidgetsBinding.instance?.addPostFrameCallback((_) =>
-
         Provider.of<ProductsManager>(context, listen: false)
-            .fetchPopularProducts(shouldNotify: false,fromSplash: true));
-
+            .fetchPopularProducts(shouldNotify: false, fromSplash: true));
   }
 
   @override
@@ -66,82 +63,72 @@ class _SplashcreenState extends State<SplashScreen> {
     return WillPopScope(
         onWillPop: () async => true,
         child: Container(
-            child:Scaffold(
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true, //new line
+            child: Scaffold(
+                backgroundColor: Colors.transparent,
+                resizeToAvoidBottomInset: true, //new line
 
-          body: FutureBuilder(
-            future: loadData(),
-            builder: (context, AsyncSnapshot snapshot) {
+                body: FutureBuilder(
+                    future: loadData(),
+                    builder: (context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasError) {
+                        return Root();
+                      }
+                      if (snapshot.hasData) {
+                        SchedulerBinding.instance!.addPostFrameCallback(
+                            (_) => showPincodeDialog(context));
+                        if (snapshot.data['maintenance'] == true) {
+                          return _AppLoadException(
+                              'We are currently in maintenance mode. Sorry for the inconvenience');
+                        }
+                        if (snapshot.data['startup_fail'] == true) {
+                          return _AppLoadException(
+                              'Failed to load data. Please Check your Internet Connection');
+                        }
+                        if (snapshot.data['wpUser'] != null &&
+                            snapshot.data['wcUser'] != null) {
+                          Provider.of<UserManager>(context, listen: false)
+                              .initializeUser(snapshot.data['wpUser'],
+                                  snapshot.data['wcUser']);
+                        }
+                        if (snapshot.data['cartItems'] != null &&
+                            snapshot.data['cartItems'] is List<Product>) {
+                          List<Product> localCartProducts =
+                              snapshot.data['cartItems'];
+                          print(snapshot.data);
+                          String cart_key = snapshot.data["cart_key"];
+                          double total = snapshot.data['total'];
 
+                          Provider.of<ProductsManager>(context, listen: false)
+                              .setProductsFromLocalCart(localCartProducts);
+                          Provider.of<CartManager>(context, listen: false)
+                              .setCartItemsFromLocalData(
+                                  localCartProducts, cart_key, total);
+                          Provider.of<CartManager>(context, listen: false)
+                              .setWishCartItemsFromLocalData(localCartProducts);
+                        }
 
-    if (snapshot.hasError) {
-    return Root();
-    }
-    if (snapshot.hasData) {
-    SchedulerBinding.instance!
-        .addPostFrameCallback((_) => showPincodeDialog(context));
-    if (snapshot.data['maintenance'] == true) {
-    return _AppLoadException(
-    'We are currently in maintenance mode. Sorry for the inconvenience');
-    }
-    if (snapshot.data['startup_fail'] == true) {
-    return _AppLoadException(
-    'Failed to load data. Please Check your Internet Connection');
-    }
-    if (snapshot.data['wpUser'] != null &&
-    snapshot.data['wcUser'] != null) {
-    Provider.of<UserManager>(context, listen: false)
-        .initializeUser(
-    snapshot.data['wpUser'], snapshot.data['wcUser']);
-    }
-    if (snapshot.data['cartItems'] != null &&
-    snapshot.data['cartItems'] is List<Product>) {
-    List<Product> localCartProducts = snapshot.data['cartItems'];
-
-    Provider.of<ProductsManager>(context, listen: false)
-        .setProductsFromLocalCart(localCartProducts);
-    Provider.of<CartManager>(context, listen: false)
-        .setCartItemsFromLocalData(localCartProducts);
-    Provider.of<CartManager>(context, listen: false)
-        .setWishCartItemsFromLocalData(localCartProducts);
-    }
-
-    if( Provider.of<ProductsManager>(context, listen: false)
-        .ApiCall >=
-    3){
-    Utils.popNavigateToFirst(context);
-    Utils.pushReplacementNavigateTo(
-    context,
-    //false,
-    RoutePaths.NavigationScreen,
-    arguments: 0
-    );
-    // return NavigationScreen();
-    }
-    }
-    return
-    Consumer<ProductsManager>(
-    builder: (context, productsManager, child) {
-    return
-
-    Provider.of<ProductsManager>(context, listen: false)
-        .ApiCall >
-    3
-    ? NavigationScreen()
-        : _AppLoadingScreen();
-
-
-    }
-    );
-    }
-
-
-        )
-
-      )
-    )
-    );
+                        if (Provider.of<ProductsManager>(context, listen: false)
+                                .ApiCall >=
+                            3) {
+                          Utils.popNavigateToFirst(context);
+                          Utils.pushReplacementNavigateTo(
+                              context,
+                              //false,
+                              RoutePaths.NavigationScreen,
+                              arguments: 0);
+                          // return NavigationScreen();
+                        }
+                      }
+                      return Consumer<ProductsManager>(
+                          builder: (context, productsManager, child) {
+                        return Provider.of<ProductsManager>(context,
+                                        listen: false)
+                                    .ApiCall >
+                                3
+                            ? NavigationScreen()
+                            : _AppLoadingScreen();
+                      });
+                    }))));
   }
 
   final WooCommerceAPI wooCommerceAPI = WooCommerceAPI(
@@ -150,23 +137,31 @@ class _SplashcreenState extends State<SplashScreen> {
       consumerSecret: Secret.consumerSecret);
 
   Future loadData() async {
-
-
     List<Product> localCartItems = [];
     List<Product> localWishItems = [];
+    String cartKey = "";
+    double total = 0.0;
     try {
       Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
       final SharedPreferences prefs = await _prefs;
       String? cartData = prefs.getString(localCartStorageKey);
       String? wishData = prefs.getString(localWishStorageKey);
       if (cartData != null) {
-        List<dynamic> items = json.decode(cartData);
-        Map<int, int> itemIds = {};
-        items.forEach((item) {
+        var items = json.decode(cartData);
+        total = double.parse(items["totals"]["total"]) ?? 0.0;
+        cartKey = items["cart_key"];
+        print(items);
+        Map<int, Map<String, dynamic>> itemIds = {};
+        (items["items"] as List<dynamic>).forEach((item) {
+          print(item);
           if (item['id'] != null && item['id'] is int) {
-            itemIds[item['id']] = item['quantity'] ?? 1;
+            itemIds[item['id']] = {
+              "quantity": item['quantity']["value"] ?? 1,
+              "item_key": item['item_key']
+            };
           }
         });
+        print(".....................");
         if (itemIds.length > 0) {
           APICall = APICall + 1;
 
@@ -174,19 +169,19 @@ class _SplashcreenState extends State<SplashScreen> {
               await fetchCartItems(itemIds.keys.toList());
           fetchedCartItems.forEach((item) {
             Product product = Product(item);
-            product.quantity = itemIds[item['id']] ?? 1;
+            product.quantity = itemIds[item['id']]!["quantity"] ?? 1;
+            product.item_key = itemIds[item['id']]!["item_key"] ?? "";
             localCartItems.add(product);
           });
         }
       }
       if (wishData != null) {
-     List<dynamic>  localWishItemstmp = json.decode(wishData)   ;
-     for(int i=0;i<localWishItemstmp.length;i++){
-       localWishItems.add(new Product(localWishItemstmp[i]
-
-       ));
-     }
-     Provider.of<CartManager>(context, listen: false).cartWishItems=localWishItems;// Map<int, int> wishIds = {};
+        List<dynamic> localWishItemstmp = json.decode(wishData);
+        for (int i = 0; i < localWishItemstmp.length; i++) {
+          localWishItems.add(new Product(localWishItemstmp[i]));
+        }
+        Provider.of<CartManager>(context, listen: false).cartWishItems =
+            localWishItems; // Map<int, int> wishIds = {};
 
       }
     } catch (err) {
@@ -219,13 +214,20 @@ class _SplashcreenState extends State<SplashScreen> {
           'success': true,
           'cartItems': localCartItems,
           'wcUser': wcUserInfo,
-          'wpUser': wpUserInfo
+          'wpUser': wpUserInfo,
+          'cart_key': cartKey,
+          'total': total
         };
       }
     } catch (err) {
       print(err);
     }
-    return {'success': true, 'cartItems': localCartItems};
+    return {
+      'success': true,
+      'cartItems': localCartItems,
+      'cart_key': cartKey,
+      'total': total
+    };
   }
 
   Future fetchCartItems(List<int> ids) async {
@@ -314,9 +316,6 @@ class _SplashcreenState extends State<SplashScreen> {
     //   },
     // );
   }
-
-
-
 }
 
 class _AppLoadException extends StatelessWidget {
@@ -360,54 +359,46 @@ class _AppLoadException extends StatelessWidget {
   }
 }
 
-
 class _AppLoadingScreen extends StatelessWidget {
+  late VideoPlayerController _controller;
 
- late VideoPlayerController _controller;
-
- final listOfAnimations  = <AppBody>[
-
-   AppBody(
-     'waveDots',
-     LoadingAnimationWidget.waveDots(
-       color:Styles.colorPrimary,
-       size: 100.h,
-     ),
-   ),
-
-
- ];
+  final listOfAnimations = <AppBody>[
+    AppBody(
+      'waveDots',
+      LoadingAnimationWidget.waveDots(
+        color: Styles.colorPrimary,
+        size: 100.h,
+      ),
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         // color: GrodudesPrimaryColor.primaryColor[800],
-        body:
-
-        Scaffold(
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(child: Container()),
-              SizedBox(
-                  height: 250.h,
-                  child:
-                  Center(child:
-                  Image.asset(Assets.PNG_SplashImage,color: Styles.colorPrimary,
-                  ),)),
-
-              SizedBox(
-                height: 100.h,),
-              Expanded(
-                child: Center(
-                  child: listOfAnimations.first.widget,
+        body: Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(child: Container()),
+          SizedBox(
+              height: 250.h,
+              child: Center(
+                child: Image.asset(
+                  Assets.PNG_SplashImage,
+                  color: Styles.colorPrimary,
                 ),
-              ),
-              Expanded(child: Container()),
-            ],
+              )),
+          SizedBox(
+            height: 100.h,
           ),
-
-
-        )
-    );
+          Expanded(
+            child: Center(
+              child: listOfAnimations.first.widget,
+            ),
+          ),
+          Expanded(child: Container()),
+        ],
+      ),
+    ));
   }
 }

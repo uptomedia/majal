@@ -33,12 +33,12 @@ class TopOrderTab extends StatefulWidget {
   _TopOrderTabState createState() => _TopOrderTabState();
 }
 
-class _TopOrderTabState extends State<TopOrderTab> with AutomaticKeepAliveClientMixin {
+class _TopOrderTabState extends State<TopOrderTab>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
   _openLatestProductsPage(productIds) {
-
     // Utils.pushNewScreenWithRouteSettings(context,
     //   settings:
     //   RouteSettings(name: RoutePaths.HomeSpecialProductsPage),
@@ -82,7 +82,6 @@ class _TopOrderTabState extends State<TopOrderTab> with AutomaticKeepAliveClient
       CupertinoPageRoute(
         builder: (context) => HomeSpecialProductsPage(
           S.of(context).popularProducts,
-
           productIds,
           () => Provider.of<ProductsManager>(context, listen: false)
               .fetchPopularProducts(shouldNotify: true),
@@ -91,9 +90,6 @@ class _TopOrderTabState extends State<TopOrderTab> with AutomaticKeepAliveClient
     );
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -101,52 +97,57 @@ class _TopOrderTabState extends State<TopOrderTab> with AutomaticKeepAliveClient
     return Consumer<ProductsManager>(
       builder: (context, productsManager, child) {
         double carouselHeight = MediaQuery.of(context).size.width * 0.344;
-        return
-
-          Column(
+        return Column(
           // cacheExtent: 2000,
           // shrinkWrap: true,
           children: <Widget>[
-
-         SizedBox(height:10.h),
-          Container(
-            color: Styles.colorPrimary,
-          height:175.h,),
-            SizedBox(height:18.h),
-Expanded(
-    // height: 500.h,
-    child:
-            FutureBuilder(
+            SizedBox(height: 10.h),
+            Container(
+              color: Styles.colorPrimary,
+              height: 175.h,
+            ),
+            SizedBox(height: 18.h),
+            Expanded(
+                // height: 500.h,
+                child: FutureBuilder(
               future: productsManager.fetchPopularProducts(),
               builder: (context, snapshot) => Column(
                 children: <Widget>[
                   _HeaderRow(
-                    S.of(context).specialOffers ,
+                    S.of(context).specialOffers,
                     snapshot.connectionState == ConnectionState.done
                         ? () => _openPopularProductsPage(
-                        productsManager.popularProductIds)
+                            productsManager.popularProductIds)
                         : () {},
                   ),
-                  SizedBox(height: 14.h,),
-                 Expanded(child:
-                 Container(
-                    // height:400.h,
-                     child: snapshot.connectionState != ConnectionState.done
-                        ? Center(child: CircularProgressIndicator(color: Styles.colorPrimary,))
-                        : snapshot.hasData
-                        ? _HorizontalProductRow(
-                      productIds: productsManager.popularProductIds,
-                      products: productsManager.products,
-                      isFeature: true,
-
-        )
-                        : snapshot.hasError
-                        ? _SpecialProductsLoadError()
-                        : Center(child: CircularProgressIndicator(color: Styles.colorPrimary,)),
-                        ),
-                 )   ],
-              ),)
-            ),
+                  SizedBox(
+                    height: 14.h,
+                  ),
+                  Expanded(
+                    child: Container(
+                      // height:400.h,
+                      child: snapshot.connectionState != ConnectionState.done
+                          ? Center(
+                              child: CircularProgressIndicator(
+                              color: Styles.colorPrimary,
+                            ))
+                          : snapshot.hasData
+                              ? _HorizontalProductRow(
+                                  productIds: productsManager.popularProductIds,
+                                  products: productsManager.products,
+                                  isFeature: true,
+                                )
+                              : snapshot.hasError
+                                  ? _SpecialProductsLoadError()
+                                  : Center(
+                                      child: CircularProgressIndicator(
+                                      color: Styles.colorPrimary,
+                                    )),
+                    ),
+                  )
+                ],
+              ),
+            )),
             // SizedBox(height: 34.h,),
 
             // FutureBuilder(
@@ -183,7 +184,6 @@ Expanded(
 
             SizedBox(height: 16.h),
           ],
-
         );
       },
       // child: ,
@@ -205,7 +205,10 @@ class _HomeCategoryState extends State<HomeCategory> {
       future: widget.productsManager.fetchAllParentCategories(),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done)
-          return Center(child: CircularProgressIndicator(color: Styles.colorPrimary,));
+          return Center(
+              child: CircularProgressIndicator(
+            color: Styles.colorPrimary,
+          ));
         if (snapshot.hasData) {
           List<Category> categories =
               widget.productsManager.categories.values.toList();
@@ -232,7 +235,7 @@ class _HomeCategoryState extends State<HomeCategory> {
             child: Column(
               children: [
                 Text(S.of(context).failedToFetchCategories),
-                RaisedButton(
+                ElevatedButton(
                   child: Text(
                     S.of(context).retry,
                     style: TextStyle(color: Colors.white),
@@ -243,7 +246,10 @@ class _HomeCategoryState extends State<HomeCategory> {
             ),
           );
         }
-        return Center(child: CircularProgressIndicator(color: Styles.colorPrimary,));
+        return Center(
+            child: CircularProgressIndicator(
+          color: Styles.colorPrimary,
+        ));
       },
     );
   }
@@ -267,7 +273,7 @@ class _SpecialProductsLoadError extends StatelessWidget {
           alignment: Alignment.center,
           width: MediaQuery.of(context).size.width * 0.6,
           child: Text(S.of(context).errorMessage,
-              textAlign: TextAlign.center, style:Styles.boldTextStyle),
+              textAlign: TextAlign.center, style: Styles.boldTextStyle),
         ),
       ],
     );
@@ -280,35 +286,28 @@ class _HeaderRow extends StatelessWidget {
   _HeaderRow(this.title, this.cb);
   @override
   Widget build(BuildContext context) {
-    return Container(height: 24.h,
+    return Container(
+      height: 24.h,
       // color: Colors.red,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text(
-            title,
-            style: Styles.boldTextStyle.copyWith(
-
-                fontSize: Styles.fontSize20
-            )
-          ),
+          Text(title,
+              style:
+                  Styles.boldTextStyle.copyWith(fontSize: Styles.fontSize20)),
           Expanded(child: Container()),
           InkWell(
-            child:Container(
-              height: 30.h,
-            padding: EdgeInsets.all(0),
-            child: Text(
-              S.of(context).seeAll,
-              style: Styles.regularTextStyle.copyWith(
-                color: Styles.colorFontTitle.withOpacity(0.59),
-                fontSize: Styles.fontSize15
-              )
-            )),
+            child: Container(
+                height: 30.h,
+                padding: EdgeInsets.all(0),
+                child: Text(S.of(context).seeAll,
+                    style: Styles.regularTextStyle.copyWith(
+                        color: Styles.colorFontTitle.withOpacity(0.59),
+                        fontSize: Styles.fontSize15))),
             onTap: () {
-             cb( );
-
+              cb();
             },
           ),
         ],
@@ -321,7 +320,10 @@ class _HorizontalProductRow extends StatelessWidget {
   final Set<int> productIds;
   final Map<int, Product> products;
   final bool isFeature;
-  _HorizontalProductRow({required this.productIds, required this.products,this.isFeature:false});
+  _HorizontalProductRow(
+      {required this.productIds,
+      required this.products,
+      this.isFeature: false});
 
   @override
   Widget build(BuildContext context) {
@@ -335,43 +337,34 @@ class _HorizontalProductRow extends StatelessWidget {
     }
     if (productIds.length == 0) {
       return Center(
-        child:CircularProgressIndicator(color: Styles.colorPrimary,)
-      );
+          child: CircularProgressIndicator(
+        color: Styles.colorPrimary,
+      ));
     }
-    return
-      isFeature? Container(
-          height: 510.h,
-          padding: EdgeInsets.symmetric(horizontal: 18.w),
-          child:
-      ListView.separated(
-
-        separatorBuilder: (context, index) => SizedBox(height: 28.h,),
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-
-      itemCount: productIds.length,// > 4 ? 4 : productIds.length,
-      itemBuilder: (context, index) =>
-
-
-          ProductCardAumet(products[productIds.elementAt(index)]!))
-      ):
-
-
-      Container(
-        height: 239.h ,
-        child:
-        ListView.separated(
-        separatorBuilder: (context, index) => SizedBox(width: 28.w,),
-      scrollDirection: Axis.horizontal,
-      shrinkWrap: true,
-      itemCount: productIds.length > 4 ? 4 : productIds.length,
-      itemBuilder: (context, index) =>
-
-
-
-        ProductCard(products[productIds.elementAt(index)]!),
-
-    )
-      );
+    return isFeature
+        ? Container(
+            height: 510.h,
+            padding: EdgeInsets.symmetric(horizontal: 18.w),
+            child: ListView.separated(
+                separatorBuilder: (context, index) => SizedBox(
+                      height: 28.h,
+                    ),
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: productIds.length, // > 4 ? 4 : productIds.length,
+                itemBuilder: (context, index) =>
+                    ProductCardAumet(products[productIds.elementAt(index)]!)))
+        : Container(
+            height: 239.h,
+            child: ListView.separated(
+              separatorBuilder: (context, index) => SizedBox(
+                width: 28.w,
+              ),
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: productIds.length > 4 ? 4 : productIds.length,
+              itemBuilder: (context, index) =>
+                  ProductCard(products[productIds.elementAt(index)]!),
+            ));
   }
 }

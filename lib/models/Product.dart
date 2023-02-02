@@ -1,10 +1,13 @@
 class Product {
   Map<String, dynamic> data = {};
   int quantity = 1;
+  String? item_key;
 
-  Product(Map<String, dynamic> data) {
+  Product(
+    Map<String, dynamic> data,
+  ) {
     this.data = data;
-    quantity = 1;
+    quantity = quantity;
   }
 
   @override
@@ -19,4 +22,3 @@ class Product {
   @override
   int get hashCode => this.data['id'].hashCode;
 }
-

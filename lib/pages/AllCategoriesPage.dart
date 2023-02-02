@@ -27,7 +27,10 @@ class _AllCategoriesPageState extends State<AllCategoriesPage>
           future: productsManager.fetchAllParentCategories(),
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done)
-              return Center(child: CircularProgressIndicator(color: Styles.colorPrimary,));
+              return Center(
+                  child: CircularProgressIndicator(
+                color: Styles.colorPrimary,
+              ));
             if (snapshot.hasData) {
               return GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -51,7 +54,7 @@ class _AllCategoriesPageState extends State<AllCategoriesPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(S.of(context).failedToFetchCategories),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text(
                       S.of(context).retry,
                       style: TextStyle(color: Colors.white),
@@ -61,11 +64,10 @@ class _AllCategoriesPageState extends State<AllCategoriesPage>
                 ],
               );
             }
-            return Center(child:
-
-            CircularProgressIndicator(color: Styles.colorPrimary,)
-
-            );
+            return Center(
+                child: CircularProgressIndicator(
+              color: Styles.colorPrimary,
+            ));
           },
         );
       },

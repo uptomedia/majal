@@ -1,5 +1,7 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:grodudes/helper/WooCommerceAPI.dart';
 import 'package:grodudes/models/Product.dart';
@@ -11,11 +13,21 @@ import '../secret.dart';
 
 const String localCartStorageKey = 'grodudes_cart_data';
 const String localWishStorageKey = 'grodudes_cart_wish_data';
-enum cartStates { init,loaded, pending,  }
+
+enum cartStates {
+  init,
+  loaded,
+  pending,
+}
+
 class CartManager with ChangeNotifier {
   List<Product> cartItems = [];
   List<Product> filterCartItems = [];
   List<Disturber> distrubersList = [];
+  FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  late Map<String, dynamic>? wpUserInfo;
+  late Map<String, dynamic>? wcUserInfo;
+  String cart_key = "";
 
   double total = 0;
   double totalFiltered = 0;
@@ -28,9 +40,9 @@ class CartManager with ChangeNotifier {
   late Future<SharedPreferences> _prefs;
   CartManager() {
     cartItems = [];
-    filterCartItems=[];
-    filteredIds=[];
-    this.cartState=cartStates.init;
+    filterCartItems = [];
+    filteredIds = [];
+    this.cartState = cartStates.init;
     this._prefs = SharedPreferences.getInstance();
   }
   WooCommerceAPI wooCommerceAPI = WooCommerceAPI(
@@ -40,9 +52,9 @@ class CartManager with ChangeNotifier {
   Future applyCoupon(String s) async {
     // /wp-json/wc/v3/coupons/?code=your_coupon_code
     this.amount = 0;
-    if(this.cartState!=cartStates.pending){
-    this.cartState=cartStates.pending;
-    notifyListeners();
+    if (this.cartState != cartStates.pending) {
+      this.cartState = cartStates.pending;
+      notifyListeners();
     }
     List<dynamic> data1 =
         await wooCommerceAPI.applyCoupon(s).catchError((err) => print(err));
@@ -55,63 +67,73 @@ class CartManager with ChangeNotifier {
       };
       this.amount = double.parse(data1[0]["amount"]) / 100;
     }
-    this.cartState=cartStates.loaded;
+    this.cartState = cartStates.loaded;
     notifyListeners();
 
     return this.coupon.data;
   }
 
-  setCartItemsFromLocalData(List<Product> products) {
+  setCartItemsFromLocalData(List<Product> products, String key, double total2) {
+    cartItems = [];
+    print(total2);
+    cart_key = key;
+    total = total2;
     if (this.cartItems.length > 0) return;
     products.forEach((item) {
-      if (!isPresentInCart(item)) {
-        this.cartItems.add(item);
-      }
+      this.cartItems.add(item);
     });
     this.cartItems.forEach((item) {
+      bool exited = false;
+      print(item.data);
+      if (item.data["tags"] is List) {
+        if (item.data['tags'].length > 0)
+          for (int j = 0; j < item.data['tags'].length; j++) {
+            exited = false;
+            for (int i = 0; i < distrubersList.length; i++) {
+              if (distrubersList[i].id == item.data['tags'][j]['id']) {
+                exited = true;
+              }
+            }
 
-      bool exited=false;
-    if(item.data['tags'].length>0)
-      for(int j=0;j<item.data['tags'].length;j++){
-        exited=false;
-        for(int i=0;i<distrubersList.length;i++){
-
-          if(distrubersList[i].id
-              ==
-              item.data['tags'][j]['id']){
-            exited=true;
+            // if (!exited) {
+            //   distrubersList.add(new Disturber(
+            //     id: item.data['tags'][j]['id'],
+            //     name: item.data['tags'][j]['name'],
+            //     imagePath: item.data['tags'][j]['path'],
+            //   ));
+            // }
           }
-        }
-
-        if(!exited){
-          distrubersList.add(new Disturber(
-            id:item.data['tags'][j]['id'],
-            name: item.data['tags'][j]['name'],
-            imagePath: item.data['tags'][j]['path'],
-          ));
-        }
       }
     });
-    filterCartItems=cartItems;
-    calculateTotal();
+    filterCartItems = cartItems;
+    // notifyListeners();
+    // calculateTotal();
+    loadData();
   }
-calculateTotal(){
-    total=0;
-    totalFiltered=0;
-    cartItems.forEach((element) { 
-      if(element.data['price']!=null )
-      total=total+
-          (double.tryParse(element.data['price']??'0.0')??0)
-          *element.quantity;
-    });  
-    filterCartItems.forEach((element) { 
-      if(element.data['price']!=null )
-      totalFiltered=totalFiltered+
-          (double.tryParse(element.data['price']??'0.0')??0)
-          *element.quantity;
+
+  calculateTotal() {
+    loadData();
+    total = 0;
+    totalFiltered = 0;
+    cartItems.forEach((element) {
+      if (element.data['price'] != null)
+        total = total +
+            (double.tryParse(element.data['price'] ?? '0.0') ?? 0) *
+                element.quantity;
     });
-}
-  addCartItem(Product item, {int quantity = 1}) {
+    filterCartItems.forEach((element) {
+      if (element.data['price'] != null)
+        totalFiltered = totalFiltered +
+            (double.tryParse(element.data['price'] ?? '0.0') ?? 0) *
+                element.quantity;
+    });
+  }
+
+  addCartItem(Product item, {int quantity = 1}) async {
+    this.wpUserInfo = json.decode(await this._secureStorage.read(
+              key: 'grodudes_wp_info',
+            ) ??
+        "{}");
     if (isPresentInCart(item) == true) return;
     try {
       bool inStock = item.data['in_stock'];
@@ -124,34 +146,49 @@ calculateTotal(){
       print(err);
       return;
     }
-    bool exited=false;
-    if(item.data['tags'].length>0)
-      for(int j=0;j<item.data['tags'].length;j++){
-        exited=false;
-        for(int i=0;i<distrubersList.length;i++){
-
-          if(distrubersList[i].id
-              ==
-              item.data['tags'][j]['id']){
-            exited=true;
+    bool exited = false;
+    if (item.data['tags'].length > 0)
+      for (int j = 0; j < item.data['tags'].length; j++) {
+        exited = false;
+        for (int i = 0; i < distrubersList.length; i++) {
+          if (distrubersList[i].id == item.data['tags'][j]['id']) {
+            exited = true;
           }
         }
 
-        if(!exited){
+        if (!exited) {
           distrubersList.add(new Disturber(
-          id:item.data['tags'][j]['id'],
-          name: item.data['tags'][j]['name'],
-          imagePath: item.data['tags'][j]['path'],
+            id: item.data['tags'][j]['id'],
+            name: item.data['tags'][j]['name'],
+            imagePath: item.data['tags'][j]['path'],
           ));
         }
       }
 
     item.quantity = quantity;
-    this.cartItems.add(item);
-    calculateTotal();
+    String? criddentials = await this._secureStorage.read(key: "auth_data");
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Basic ' + criddentials!
+    };
+    print(cart_key);
+    var response = await http.post(
+      Uri.parse("${Secret.baseUrl}/wp-json/cocart/v2/cart/add-item"),
+      headers: headers,
+      body: json.encode(
+          {"id": item.data["id"].toString(), "quantity": quantity.toString()}),
+      encoding: Encoding.getByName('utf-8'),
+    );
+    // var data = await wooCommerceAPI.postAsync("wp-json/cocart/v2/cart/add-item",
+    //     {"id": item.data["id"], "quantity": quantity});
+    print(response.body);
+    print(".................................");
+    // this.cartItems.add(item);
+    await _storeCartLocally(response.body);
+    await calculateTotal();
     notifyListeners();
-    _storeCartLocally();
   }
+
   setWishCartItemsFromLocalData(List<Product> products) {
     if (this.cartWishItems.length > 0) return;
     products.forEach((item) {
@@ -160,15 +197,35 @@ calculateTotal(){
       }
     });
   }
-  removeCartItem(Product item) {
+
+  removeCartItem(Product item) async {
+    this.wpUserInfo = json.decode(await this._secureStorage.read(
+              key: 'grodudes_wp_info',
+            ) ??
+        "{}");
+    String? criddentials = await this._secureStorage.read(key: "auth_data");
+    Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Basic ' + criddentials!
+    };
+    print(cart_key);
+    var response = await http.delete(
+      Uri.parse(
+          "${Secret.baseUrl}/wp-json/cocart/v2/cart/item/${item.item_key}"),
+      headers: headers,
+      encoding: Encoding.getByName('utf-8'),
+    );
+    print(response.body);
     this.cartItems.remove(item);
     this.filterCartItems.remove(item);
+    _storeCartLocally(response.body);
     calculateTotal();
     notifyListeners();
-    _storeCartLocally();
   }
-  addWishItem(Product item, ) {
 
+  addWishItem(
+    Product item,
+  ) {
     this.cartWishItems.add(item);
     notifyListeners();
     _storeWishLocally();
@@ -185,38 +242,33 @@ calculateTotal(){
     filterCartItems.clear();
     total = 0;
     totalFiltered = 0;
-    this.cartState=cartStates.init;
+    this.cartState = cartStates.init;
     notifyListeners();
-    _storeCartLocally();
+    // _storeCartLocally();
   }
-  filterCartItem(Disturber disturber,{bool show:true}){
+
+  filterCartItem(Disturber disturber, {bool show: true}) {
     // if(show){
-      if(filteredIds.contains(disturber.id)){
+    if (filteredIds.contains(disturber.id)) {
       filteredIds.remove(disturber.id);
-    }else{
+    } else {
       filteredIds.add(disturber.id);
     }
-    bool shouldHide=false;
-filterCartItems=[];
-    for(int i=0;i<cartItems.length;i++){
-        shouldHide=false;
+    bool shouldHide = false;
+    filterCartItems = [];
+    for (int i = 0; i < cartItems.length; i++) {
+      shouldHide = false;
 
-      if(cartItems[i].data['tags'].length>0){
-        cartItems[i].data['tags'].forEach((item) =>
-
-            {
-       for(int j=0;j<filteredIds.length;j++){
-
-        if(filteredIds[j]==item['id']){
-          shouldHide=true
-         }
-      }
+      if (cartItems[i].data['tags'].length > 0) {
+        cartItems[i].data['tags'].forEach((item) => {
+              for (int j = 0; j < filteredIds.length; j++)
+                {
+                  if (filteredIds[j] == item['id']) {shouldHide = true}
+                }
             });
-
-    }
-      if(!shouldHide){
+      }
+      if (!shouldHide) {
         filterCartItems.add(cartItems[i]);
-
       }
     }
     calculateTotal();
@@ -229,23 +281,53 @@ filterCartItems=[];
     }
     return false;
   }
+
+  getIsPresentInCart(Product item) {
+    for (final cartItem in cartItems) {
+      if (cartItem.isSameAs(item)) return cartItem;
+    }
+  }
+
   isPresentInWishList(Product item) {
     for (final cartItem in cartWishItems) {
       if (cartItem.isSameAs(item)) return true;
     }
     return false;
   }
-  incrementQuantityOfProduct(Product item) {
+
+  incrementQuantityOfProduct(Product item) async {
     if (isPresentInCart(item) == true) {
       for (final cartItem in cartItems) {
         if (cartItem.isSameAs(item)) {
+          print(cartItem.item_key);
+          this.wpUserInfo = json.decode(await this._secureStorage.read(
+                    key: 'grodudes_wp_info',
+                  ) ??
+              "{}");
+          String? criddentials =
+              await this._secureStorage.read(key: "auth_data");
+          Map<String, String> headers = {
+            HttpHeaders.contentTypeHeader: 'application/json',
+            HttpHeaders.authorizationHeader: 'Basic ' + criddentials!
+          };
+          item.quantity++;
           cartItem.quantity++;
+          var response = await http.post(
+            Uri.parse(
+                "${Secret.baseUrl}/wp-json/cocart/v2/cart/item/${cartItem.item_key}"),
+            headers: headers,
+            body: json.encode({"quantity": cartItem.quantity.toString()}),
+            encoding: Encoding.getByName('utf-8'),
+          );
+          print(response.body);
+          _storeCartLocally(response.body);
+          calculateTotal();
           notifyListeners();
-          _storeCartLocally();
+
           return;
         }
       }
-    }else {
+    } else {
       try {
         bool inStock = item.data['in_stock'];
         bool isPurchasable = item.data['purchasable'];
@@ -257,39 +339,65 @@ filterCartItems=[];
         print(err);
         return;
       }
-      item.quantity = 1;
-      this.cartItems.add(item);
+      // item.quantity = 1;
+      addCartItem(item, quantity: 1);
+      // this.cartItems.add(item);
       calculateTotal();
       notifyListeners();
-      _storeCartLocally();
-    }}
+      // _storeCartLocally();
+      return;
+    }
+  }
 
-  decrementQuantityOfProduct(Product item) {
+  decrementQuantityOfProduct(Product item) async {
+    print(wpUserInfo);
     for (final cartItem in cartItems) {
       if (cartItem.isSameAs(item)) {
         if (cartItem.quantity == 1) {
-          removeCartItem(item);
+          removeCartItem(cartItem);
           return;
         }
+        item.quantity--;
         cartItem.quantity--;
+        this.wpUserInfo = json.decode(await this._secureStorage.read(
+                  key: 'grodudes_wp_info',
+                ) ??
+            "{}");
+        String? criddentials = await this._secureStorage.read(key: "auth_data");
+        Map<String, String> headers = {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          HttpHeaders.authorizationHeader: 'Basic ' + criddentials!
+        };
+        var response = await http.post(
+          Uri.parse(
+              "${Secret.baseUrl}/wp-json/cocart/v2/cart/item/${cartItem.item_key}"),
+          headers: headers,
+          body: json.encode({"quantity": cartItem.quantity.toString()}),
+          encoding: Encoding.getByName('utf-8'),
+        );
+        print(response.body);
+        _storeCartLocally(response.body);
         calculateTotal();
         notifyListeners();
-        _storeCartLocally();
+
         return;
       }
     }
   }
 
-
-
-  Future _storeCartLocally() async {
+  Future _storeCartLocally(String cart) async {
     try {
-      final SharedPreferences prefs = await _prefs;
-      await prefs.setString(localCartStorageKey, _getCartDataAsString());
+      var cartData = json.decode(cart);
+      if (cartData["cart_key"] != null) {
+        final SharedPreferences prefs = await _prefs;
+        await prefs.setString(localCartStorageKey, cart);
+      }
     } catch (err) {
       print(err);
     }
+    loadData();
   }
+
   Future _storeWishLocally() async {
     try {
       final SharedPreferences prefs = await _prefs;
@@ -309,15 +417,165 @@ filterCartItems=[];
         );
     return json.encode(productsInCart);
   }
+
   String _getCartWishDataAsString() {
     List<dynamic> productsInCart = [];
     this.cartWishItems.forEach(
           (item) => productsInCart.add(item.data
-            // 'id': item.data['id'],
+              // 'id': item.data['id'],
 
-
-          ),
+              ),
         );
     return json.encode(productsInCart);
+  }
+
+  Future fetchCartItems(List<int> ids) async {
+    List<dynamic> fetchedProducts = [];
+    try {
+      String includeString = ids.join(',');
+      fetchedProducts =
+          await this.wooCommerceAPI.getAsync('products?include=$includeString');
+      return fetchedProducts;
+    } catch (err) {
+      fetchedProducts = [];
+      return fetchedProducts;
+    }
+  }
+
+  Future loadData() async {
+    List<Product> localCartItems = [];
+    List<Product> localWishItems = [];
+    String cartKey = "";
+    try {
+      Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      final SharedPreferences prefs = await _prefs;
+      String? cartData = prefs.getString(localCartStorageKey);
+      String? wishData = prefs.getString(localWishStorageKey);
+      if (cartData != null) {
+        var items = json.decode(cartData);
+        total = double.parse(items["totals"]["total"]) ?? 0.0;
+        cartKey = items["cart_key"];
+        print(items);
+        Map<int, Map<String, dynamic>> itemIds = {};
+        (items["items"] as List<dynamic>).forEach((item) {
+          print(item);
+          if (item['id'] != null && item['id'] is int) {
+            itemIds[item['id']] = {
+              "quantity": item['quantity']["value"] ?? 1,
+              "item_key": item['item_key']
+            };
+          }
+        });
+        print(".....................");
+        if (itemIds.length > 0) {
+          List<dynamic> fetchedCartItems =
+              await fetchCartItems(itemIds.keys.toList());
+          fetchedCartItems.forEach((item) {
+            Product product = Product(item);
+            product.quantity = itemIds[item['id']]!["quantity"] ?? 1;
+            product.item_key = itemIds[item['id']]!["item_key"] ?? "";
+            localCartItems.add(product);
+          });
+        }
+      }
+      if (wishData != null) {
+        List<dynamic> localWishItemstmp = json.decode(wishData);
+        for (int i = 0; i < localWishItemstmp.length; i++) {
+          localWishItems.add(new Product(localWishItemstmp[i]));
+        }
+        cartWishItems = localWishItems; // Map<int, int> wishIds = {};
+
+      }
+    } catch (err) {
+      print(err);
+      localCartItems = [];
+    }
+
+    try {
+      // check for previous logins
+      FlutterSecureStorage _storage = FlutterSecureStorage();
+      var isLoggedIn = await _storage.read(key: 'grodudes_login_status');
+
+      // fetch user details if the user was logged in
+      if (isLoggedIn != null && isLoggedIn == 'true') {
+        String? wpUserInfoString = await _storage.read(key: 'grodudes_wp_info');
+        String? wcUserInfoString = await _storage.read(key: 'grodudes_wc_info');
+        print(wcUserInfoString);
+        wpUserInfo = {};
+        wcUserInfo = {};
+        if (wpUserInfoString != null) {
+          wpUserInfo = json.decode(wpUserInfoString);
+          String token = wpUserInfo!['jwt_token'];
+          if (token != null) {
+            wcUserInfo = json.decode(
+                wcUserInfoString ?? token); //await fetchUserData(token);
+          }
+        }
+        if (wcUserInfoString != null) {
+          wcUserInfo = json.decode(wcUserInfoString);
+          String token = wcUserInfo!['jwt_token'];
+          if (token != null) {
+            wcUserInfo = json.decode(
+                wcUserInfoString ?? token); //await fetchUserData(token);
+          }
+        }
+        cart_key = cartKey;
+        total = total / 100;
+        this.cartItems = [];
+        localCartItems.forEach((item) {
+          if (!isPresentInCart(item)) {
+            this.cartItems.add(item);
+          }
+        });
+        // this.cartItems.forEach((item) {
+        //   bool exited = false;
+        //   print(item.data);
+        //   if (item.data["tags"] is List) {
+        //     if (item.data['tags'].length > 0)
+        //       for (int j = 0; j < item.data['tags'].length; j++) {
+        //         exited = false;
+        //         for (int i = 0; i < distrubersList.length; i++) {
+        //           if (distrubersList[i].id == item.data['tags'][j]['id']) {
+        //             exited = true;
+        //           }
+        //         }
+        //       }
+        //   }
+        // });
+        filterCartItems = cartItems;
+        return {
+          'success': true,
+          'cartItems': localCartItems,
+          'wcUser': wcUserInfo,
+          'wpUser': wpUserInfo,
+          'cart_key': cartKey
+        };
+      }
+    } catch (err) {
+      print(err);
+    }
+    cart_key = cartKey;
+    total = total / 100;
+    this.cartItems = [];
+    localCartItems.forEach((item) {
+      this.cartItems.add(item);
+    });
+    // this.cartItems.forEach((item) {
+    //   bool exited = false;
+    //   print(item.data);
+    //   if (item.data["tags"] is List) {
+    //     if (item.data['tags'].length > 0)
+    //       for (int j = 0; j < item.data['tags'].length; j++) {
+    //         exited = false;
+    //         for (int i = 0; i < distrubersList.length; i++) {
+    //           if (distrubersList[i].id == item.data['tags'][j]['id']) {
+    //             exited = true;
+    //           }
+    //         }
+    //       }
+    //   }
+    // });
+    filterCartItems = cartItems;
+    return {'success': true, 'cartItems': localCartItems, 'cart_key': cartKey};
   }
 }

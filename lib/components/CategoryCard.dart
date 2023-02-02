@@ -29,11 +29,10 @@ class CategoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Utils.pushNewScreenWithRouteSettings(context,
-            settings:
-            RouteSettings(name: RoutePaths.CategoryContents),
+            settings: RouteSettings(name: RoutePaths.CategoryContents),
             withNavBar: false,
             screen: CategoryContents(
-              category:category,
+              category: category,
             ));
         // Navigator.push(
         //   context,
@@ -48,58 +47,48 @@ class CategoryCard extends StatelessWidget {
         // margin: EdgeInsets.only(top: 16, bottom: 6, left: 8, right: 8),
         width: 154.w,
         // height: 205.h,
-        decoration:
-         Styles.tilesDecoration.copyWith(
-           borderRadius: BorderRadius.all(
-             Radius.circular(22.r),
-           ),
-         ),
+        decoration: Styles.tilesDecoration.copyWith(
+          borderRadius: BorderRadius.all(
+            Radius.circular(22.r),
+          ),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-
-    Container(
-    width: 110.w,
-    height: 111.h,
-    margin: EdgeInsets.symmetric(horizontal: 21.w,vertical: 22.h),
-    child:  Center(
-    child: Container(
-    decoration: Styles
-        .transParentDecoration
-        .copyWith(
-    borderRadius: BorderRadius.all(
-    Radius.circular(111.r),
-    )),
-    child:    ClipRRect(
-    // color: Colors.black,
-
-    borderRadius: BorderRadius.circular(111.r),
-    child:
-
-    category.data['image'] != null
-                  ? ImageFetcher.getImage(category.data['image']['src'])
-                  : Image.asset(Assets.PNG_SplashImage),
-            ),)))
-            ,
-
-
-
-
-           Expanded(child:
             Container(
-              padding: const EdgeInsets.all(4),
-              child: Center(child: Text(
-                _formatName(category.data['name']),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                textAlign: TextAlign.center,
-                style:Styles.meduimTextStyle.copyWith(
-                  fontSize: Styles.fontSize16
-                ),
-                ),)
-              ),
-           )
+                width: 110.w,
+                height: 111.h,
+                margin: EdgeInsets.symmetric(horizontal: 21.w, vertical: 22.h),
+                child: Center(
+                    child: Container(
+                  decoration: Styles.transParentDecoration.copyWith(
+                      borderRadius: BorderRadius.all(
+                    Radius.circular(111.r),
+                  )),
+                  child: ClipRRect(
+                    // color: Colors.black,
+
+                    borderRadius: BorderRadius.circular(111.r),
+                    child: category.data['image'] != null
+                        ? ImageFetcher.getImage(category.data['image']['src'])
+                        : Image.asset(Assets.PNG_SplashImage),
+                  ),
+                ))),
+            Expanded(
+              child: Container(
+                  padding: const EdgeInsets.all(4),
+                  child: Center(
+                    child: Text(
+                      _formatName(category.data['name']),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      style: Styles.meduimTextStyle
+                          .copyWith(fontSize: Styles.fontSize16),
+                    ),
+                  )),
+            )
           ],
         ),
       ),
@@ -128,16 +117,16 @@ class _CategoryContentsState extends State<CategoryContents> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_formatName(this.widget.category.data['name']),
+        title: Text(
+          _formatName(this.widget.category.data['name']),
 
-        // style: Styles.appBarTextStyle,
+          // style: Styles.appBarTextStyle,
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.black, //change your color here
+        ),
+        backgroundColor: Styles.colorBackGround,
       ),
-      iconTheme: IconThemeData(
-        color: Colors.black, //change your color here
-      ),
-      backgroundColor: Styles.colorBackGround,),
-
-
       body: FutureBuilder(
         future: Provider.of<ProductsManager>(context)
             .fetchCategoryDetails(widget.category),
@@ -150,11 +139,12 @@ class _CategoryContentsState extends State<CategoryContents> {
                 children: [
                   Icon(Icons.error, color: Colors.red[600]),
                   Text(
-                   S.of(context).anErrorOccuredWhileLoading ,
+                    S.of(context).anErrorOccuredWhileLoading,
                     style: TextStyle(fontSize: 16),
                   ),
-                  RaisedButton(
-                    child: Text(S.of(context).retry, style: TextStyle(color: Colors.white)),
+                  ElevatedButton(
+                    child: Text(S.of(context).retry,
+                        style: TextStyle(color: Colors.white)),
                     onPressed: () => setState(() {}),
                   )
                 ],
@@ -165,21 +155,23 @@ class _CategoryContentsState extends State<CategoryContents> {
             if (snapshot.data['products'] != null) {
               return ProductsList(snapshot.data['products'] ?? []);
             }
-            return
-              GridView.builder(
+            return GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 0.85,
                 crossAxisSpacing: 10.w,
                 mainAxisSpacing: 10.h,
-               ),
+              ),
               padding: EdgeInsets.all(16),
               itemCount: snapshot.data['categories'].length,
               itemBuilder: (context, index) =>
                   CategoryCard(snapshot.data['categories'][index]),
             );
           }
-          return Center(child: CircularProgressIndicator(color: Styles.colorPrimary,));
+          return Center(
+              child: CircularProgressIndicator(
+            color: Styles.colorPrimary,
+          ));
         },
       ),
     );

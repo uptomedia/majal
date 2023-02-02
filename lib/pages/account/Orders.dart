@@ -34,7 +34,6 @@ class _OrdersState extends State<Orders> {
   bool? _errorAfterFetch;
   TextEditingController? _searchController;
 
-
   @override
   initState() {
     this._page = 1;
@@ -64,12 +63,11 @@ class _OrdersState extends State<Orders> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        content:
-        Text(success
+        content: Text(success
             ? S.of(context).successfullyRequestedOrderCancellation
             : S.of(context).failedToCancelOrder),
         actions: [
-          FlatButton(
+          TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
@@ -106,71 +104,84 @@ class _OrdersState extends State<Orders> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(32.0))),
-        contentPadding: EdgeInsets.symmetric(horizontal: 0.w,vertical: 0),
-        content:
-        Container(
-          width: 356.w,
-height: 218.h,
- decoration: Styles.tilesDecoration,
-padding: EdgeInsets.symmetric(horizontal: 23.w,vertical: 15.h),
-            child:
-Column(
-  mainAxisAlignment: MainAxisAlignment.center,
-  mainAxisSize: MainAxisSize.min,
-  crossAxisAlignment: CrossAxisAlignment.center,
-  children: [
-    // SizedBox(height: 39.h,),
-    Expanded(child: Container()),
-  Container(
-    // width: 206.w,
-    // height: 56.h,
-    child:
-  Text(S.of(context).areyouSureYouWant,style: Styles.boldTextStyle.copyWith(fontSize: Styles.fontSize21),),
-  ),
-  SizedBox(height: 5,),
-  Container(height: 18.h,
-    child: Text(S.of(context).thisWillDelete,
-    style: Styles.regularTextStyle.copyWith(fontSize: Styles.fontSize13)
-  ),),
-    SizedBox(height: 10.h,),
+        contentPadding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 0),
+        content: Container(
+            width: 356.w,
+            height: 218.h,
+            decoration: Styles.tilesDecoration,
+            padding: EdgeInsets.symmetric(horizontal: 23.w, vertical: 15.h),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // SizedBox(height: 39.h,),
+                Expanded(child: Container()),
+                Container(
+                  // width: 206.w,
+                  // height: 56.h,
+                  child: Text(
+                    S.of(context).areyouSureYouWant,
+                    style: Styles.boldTextStyle
+                        .copyWith(fontSize: Styles.fontSize21),
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  height: 18.h,
+                  child: Text(S.of(context).thisWillDelete,
+                      style: Styles.regularTextStyle
+                          .copyWith(fontSize: Styles.fontSize13)),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
 
-Expanded( child:  Row(children: [
-    InkWell(onTap: () {
-      isSure = false;
-      Navigator.pop(context);
-    },
-        child:Container(
-          height: 43.h,
-          width: 142.w,
-          child: Center(child:
-
-          Text(S.of(context).goback,
-            style:  Styles.boldTextStyle.copyWith(
-                fontSize: Styles.fontSize18,color: Styles.colorFontTitle),
-          ),
-          ),)),
-
-    InkWell(onTap:
-        () async {
-      isSure = true;
-      _cancelOrder(order);
-    },
-        child:Container(
-            height: 43.h,
-            width: 142.w,
-            decoration: Styles.roundedDecoration.copyWith(color: Styles.ColorLogout),
-            child: Center(child:  Text(S.of(context).delete,
-                style:
-                Styles.boldTextStyle.copyWith(fontSize: Styles.fontSize18,color: Colors.white)),
-            ))),
-  ],)),
-    Expanded(child: Container()),
-  ],)),
-
-
+                Expanded(
+                    child: Row(
+                  children: [
+                    InkWell(
+                        onTap: () {
+                          isSure = false;
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          height: 43.h,
+                          width: 142.w,
+                          child: Center(
+                            child: Text(
+                              S.of(context).goback,
+                              style: Styles.boldTextStyle.copyWith(
+                                  fontSize: Styles.fontSize18,
+                                  color: Styles.colorFontTitle),
+                            ),
+                          ),
+                        )),
+                    InkWell(
+                        onTap: () async {
+                          isSure = true;
+                          _cancelOrder(order);
+                        },
+                        child: Container(
+                            height: 43.h,
+                            width: 142.w,
+                            decoration: Styles.roundedDecoration
+                                .copyWith(color: Styles.ColorLogout),
+                            child: Center(
+                              child: Text(S.of(context).delete,
+                                  style: Styles.boldTextStyle.copyWith(
+                                      fontSize: Styles.fontSize18,
+                                      color: Colors.white)),
+                            ))),
+                  ],
+                )),
+                Expanded(child: Container()),
+              ],
+            )),
       ),
     ).catchError((err) {
       isSure = false;
@@ -236,18 +247,14 @@ Expanded( child:  Row(children: [
     }
     return false;
   }
+
   openSearchPage(String searchQuery) {
     WidgetsBinding.instance!.focusManager.primaryFocus?.unfocus();
     this._searchController!.clear();
     Utils.pushNewScreenWithRouteSettings(context,
-        settings:
-        RouteSettings(name: RoutePaths.SearchResultsPage),
+        settings: RouteSettings(name: RoutePaths.SearchResultsPage),
         withNavBar: false,
-        screen: SearchResultsPage(
-            searchQuery
-        )
-
-    );
+        screen: SearchResultsPage(searchQuery));
   }
 
   @override
@@ -266,264 +273,271 @@ Expanded( child:  Row(children: [
       //       S.of(context).yourOrders,
       //       style: Styles.appBarTextStyle,
       //     )),
-      body:
-      Container(
-        // height:MediaQuery.of(context).size.height ,
-        child:
-        Consumer<UserManager>(
-            builder: (context, user, child) {
-              var logInStatus = user.getLogInStatus();
-              return
-        logInStatus  == logInStates.pending?
-        Center(child: CircularProgressIndicator(color: Styles.colorPrimary,)):
-        logInStatus != logInStates.loggedIn
-            ? LoginPage() :
-        Column(children: [
-          SizedBox(height:MediaQuery.of(context).padding.top,),
-          Container(
-            // height: 25.h,
-            // width: 360.w,
-            padding: EdgeInsets.symmetric(
-                horizontal:16.h,vertical: 16.h),
-            // decoration: Styles.textFieldDecoration,
-
-            child:
-            Row(
-              children: <Widget>[
-
-
-                // SizedBox(width: 16.w,),
-                SizedBox(width: 26.w,
-                    child:
-                    GestureDetector(
-                        onTap: () => openSearchPage(this._searchController!.text),
-                        child:
-                        SvgPicture.asset(Assets.SVGDrawerIcon,width: 26.w,)
-
-                    )),
-                SizedBox(width: 16.w,),
-                Expanded(child: Center(child: Text("Pharma logo",style: Styles.boldTextStyle.copyWith(
-                    color: Styles.colorPrimary,
-                    fontSize: 15.sp,fontWeight: FontWeight.w700
-                ),),)),
-                // Center(child:
-                // ),
-                SizedBox(width: 13.w,),
-                SizedBox(
-                    width: 26.w,
-                    child:
-                    GestureDetector(
-                        onTap: () => openSearchPage(this._searchController!.text),
-                        child:
-                        Consumer<CartManager>(
-                            builder: (context, userManager, child) {
-                              return
-                                Badge(
-                                    badgeColor: Styles.colorPrimary,
-                                    shape: BadgeShape.circle,
-
-                                    showBadge:Provider
-                                        .of<CartManager>(context, listen: false).cartItems.length>0 ,
-                                    badgeContent: Text( Provider
-                                        .of<CartManager>(context, listen: false).cartItems.length.toString(),
-                                        style:Styles.boldTextStyle.copyWith(
-                                            color: Styles.colorSecondary,
-                                            fontSize: Styles.fontSize10
-                                        )),
-
-                                    child:
-                                    GestureDetector(
-                                        onTap:
-                                            () => openSearchPage(this._searchController!.text),
-                                        child:
-                                        SvgPicture.asset(Assets.SVG_cart,width: 26.w,)
-
-                                    )
-                                );    })
-
-
-                    )    ),
-                // SizedBox(width: 16.w,),
-
-              ],
-
-            ),
-          ),
-
-          SizedBox(
-            width: 257.w,
-            child: TextField(
-              controller: this._searchController,
-              style: TextStyle(fontSize: 18),
-              decoration:  Styles.PharmaFieldSearchDecoration(radius: 0.r,color: Styles.ColorText,
-                  hint: S.of(context).search),
-              onSubmitted: (value) => openSearchPage(value),
-            ),
-          ),
-
-           Expanded(child:
-
-
-
-
-
-
-
-
-
-            this._dataInitialized!
-                ? this._orders!.length == 0 && this._allFetched!
-                ? Center(
-              child: Text(
-                S
-                    .of(context)
-                    .youHaveNoOrders,
-                style: TextStyle(fontSize: 20),
-              ),
-            )
-                :Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child:
-            Column(children: [
-
-
-              SizedBox(height: 21.h,),
-              SizedBox(child:Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-
-                children: [
-                  Center(
-                    child: Text(
-                      S
-                          .of(context)
-                          .orders+"(${this._orders!.length})",
-                      style: TextStyle(
-
-                          fontSize:13.sp,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: Styles.FontFamily),
+      body: Container(
+          // height:MediaQuery.of(context).size.height ,
+          child: Consumer<UserManager>(builder: (context, user, child) {
+        var logInStatus = user.getLogInStatus();
+        return logInStatus == logInStates.pending
+            ? Center(
+                child: CircularProgressIndicator(
+                color: Styles.colorPrimary,
+              ))
+            : logInStatus != logInStates.loggedIn
+                ? LoginPage()
+                : Column(children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).padding.top,
                     ),
-                  ),
-                  Container(child:Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    Container(
+                      // height: 25.h,
+                      // width: 360.w,
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.h, vertical: 16.h),
+                      // decoration: Styles.textFieldDecoration,
 
-                    children: [
-                    Icon(Icons.filter_alt),
-                      Center(
-                        child: Text(
-                          S
-                              .of(context)
-                              .filters+"(${this._orders!.length})",
-                          style: TextStyle(
-
-                              fontSize:13.sp,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: Styles.FontFamily),
-                        ),
+                      child: Row(
+                        children: <Widget>[
+                          // SizedBox(width: 16.w,),
+                          SizedBox(
+                              width: 26.w,
+                              child: GestureDetector(
+                                  onTap: () => openSearchPage(
+                                      this._searchController!.text),
+                                  child: SvgPicture.asset(
+                                    Assets.SVGDrawerIcon,
+                                    width: 26.w,
+                                  ))),
+                          SizedBox(
+                            width: 16.w,
+                          ),
+                          Expanded(
+                              child: Center(
+                            child: Text(
+                              "Pharma logo",
+                              style: Styles.boldTextStyle.copyWith(
+                                  color: Styles.colorPrimary,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          )),
+                          // Center(child:
+                          // ),
+                          SizedBox(
+                            width: 13.w,
+                          ),
+                          SizedBox(
+                              width: 26.w,
+                              child: GestureDetector(
+                                  onTap: () => openSearchPage(
+                                      this._searchController!.text),
+                                  child: Consumer<CartManager>(
+                                      builder: (context, userManager, child) {
+                                    return Badge(
+                                        badgeColor: Styles.colorPrimary,
+                                        shape: BadgeShape.circle,
+                                        showBadge: Provider.of<CartManager>(
+                                                    context,
+                                                    listen: false)
+                                                .cartItems
+                                                .length >
+                                            0,
+                                        badgeContent: Text(
+                                            Provider.of<CartManager>(context,
+                                                    listen: false)
+                                                .cartItems
+                                                .length
+                                                .toString(),
+                                            style: Styles.boldTextStyle.copyWith(
+                                                color: Styles.colorSecondary,
+                                                fontSize: Styles.fontSize10)),
+                                        child: GestureDetector(
+                                            onTap: () => openSearchPage(
+                                                this._searchController!.text),
+                                            child: SvgPicture.asset(
+                                              Assets.SVG_cart,
+                                              width: 26.w,
+                                            )));
+                                  }))),
+                          // SizedBox(width: 16.w,),
+                        ],
                       ),
-                  ],) ,)
-              ],)),
-              SizedBox(height: 11.h,),
-
-                Container(
-                  alignment: Alignment.centerLeft,
-                child:  Container
-                    (child:
-                    Text(
-                      S
-                          .of(context)
-                          .totalValue+" ${this._orders!.length} JD",
-                      style: TextStyle(
-
-                          fontSize:16.sp,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: Styles.FontFamily),
                     ),
-                  )),
-
-
-              Expanded(
-                // height: 500,
-                  child:
-                  NotificationListener(
-                    onNotification: _scrollNotificationHandler,
-
-                    child: ListView.separated(
-
-                      separatorBuilder: (context, index) {
-                        return SizedBox(
-                          height: 30.h,
-                        );
-                      },
-                      // padding: EdgeInsets.symmetric(horizontal: 8),
-                      scrollDirection: Axis.vertical,
-                      itemCount: this._orders!.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == this._orders!.length) {
-                          if (this._errorAfterFetch!) {
-                            if (this._isLoadingData!) {
-                              return Container(
-                                margin: EdgeInsets.all(8),
-                                alignment: Alignment.center,
-                                child:
-                                // _buildWailtin()
-                                CircularProgressIndicator(color: Styles.colorPrimary,),
-                              );
-                            }
-                            return Container(
-                              margin: this._orders!.length == 0
-                                  ? EdgeInsets.only(
-                                  top: MediaQuery
-                                      .of(context)
-                                      .size
-                                      .height *
-                                      0.3)
-                                  : EdgeInsets.all(8),
-                              child: _FetchErrorWidget(),
-                            );
-                          }
-
-                          if (this._allFetched! || !this._isLoadingData!)
-                            return SizedBox(height: 0);
-                          return Center(child:
-                          // _buildWailtin()
-                          CircularProgressIndicator(color: Styles.colorPrimary,)
-                          );
-                        }
-                        return
-
-                          _OrderCard(
-                            order: this._orders!.values.elementAt(index),
-                            cancelOrderCb: _cancelOrderConfirmation,
-                          );
-                      },
+                    SizedBox(
+                      width: 257.w,
+                      child: TextField(
+                        controller: this._searchController,
+                        style: TextStyle(fontSize: 18),
+                        decoration: Styles.PharmaFieldSearchDecoration(
+                            radius: 0.r,
+                            color: Styles.ColorText,
+                            hint: S.of(context).search),
+                        onSubmitted: (value) => openSearchPage(value),
+                      ),
                     ),
-                  ))
-            ],),)
-                : this._errorAfterFetch!
-                ? Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(8),
-              child: _FetchErrorWidget(),
-            )
-                : Center(child:
-                // _buildWailtin()
-            CircularProgressIndicator(color: Styles.colorPrimary,)
-            )
-              )
-              ]);
-        }
-        )
-           ),
+                    Expanded(
+                        child: this._dataInitialized!
+                            ? this._orders!.length == 0 && this._allFetched!
+                                ? Center(
+                                    child: Text(
+                                      S.of(context).youHaveNoOrders,
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                  )
+                                : Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 16.w),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 21.h,
+                                        ),
+                                        SizedBox(
+                                            child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Center(
+                                              child: Text(
+                                                S.of(context).orders +
+                                                    "(${this._orders!.length})",
+                                                style: TextStyle(
+                                                    fontSize: 13.sp,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontFamily:
+                                                        Styles.FontFamily),
+                                              ),
+                                            ),
+                                            Container(
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.filter_alt),
+                                                  Center(
+                                                    child: Text(
+                                                      S.of(context).filters +
+                                                          "(${this._orders!.length})",
+                                                      style: TextStyle(
+                                                          fontSize: 13.sp,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontFamily: Styles
+                                                              .FontFamily),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        )),
+                                        SizedBox(
+                                          height: 11.h,
+                                        ),
+                                        Container(
+                                            alignment: Alignment.centerLeft,
+                                            child: Container(
+                                              child: Text(
+                                                S.of(context).totalValue +
+                                                    " ${this._orders!.length} JD",
+                                                style: TextStyle(
+                                                    fontSize: 16.sp,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily:
+                                                        Styles.FontFamily),
+                                              ),
+                                            )),
+                                        Expanded(
+                                            // height: 500,
+                                            child: NotificationListener(
+                                          onNotification:
+                                              _scrollNotificationHandler,
+                                          child: ListView.separated(
+                                            separatorBuilder: (context, index) {
+                                              return SizedBox(
+                                                height: 30.h,
+                                              );
+                                            },
+                                            // padding: EdgeInsets.symmetric(horizontal: 8),
+                                            scrollDirection: Axis.vertical,
+                                            itemCount: this._orders!.length + 1,
+                                            itemBuilder: (context, index) {
+                                              if (index ==
+                                                  this._orders!.length) {
+                                                if (this._errorAfterFetch!) {
+                                                  if (this._isLoadingData!) {
+                                                    return Container(
+                                                      margin: EdgeInsets.all(8),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child:
+                                                          // _buildWailtin()
+                                                          CircularProgressIndicator(
+                                                        color:
+                                                            Styles.colorPrimary,
+                                                      ),
+                                                    );
+                                                  }
+                                                  return Container(
+                                                    margin: this
+                                                                ._orders!
+                                                                .length ==
+                                                            0
+                                                        ? EdgeInsets.only(
+                                                            top: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.3)
+                                                        : EdgeInsets.all(8),
+                                                    child: _FetchErrorWidget(),
+                                                  );
+                                                }
 
-
-
-
-
+                                                if (this._allFetched! ||
+                                                    !this._isLoadingData!)
+                                                  return SizedBox(height: 0);
+                                                return Center(
+                                                    child:
+                                                        // _buildWailtin()
+                                                        CircularProgressIndicator(
+                                                  color: Styles.colorPrimary,
+                                                ));
+                                              }
+                                              return _OrderCard(
+                                                order: this
+                                                    ._orders!
+                                                    .values
+                                                    .elementAt(index),
+                                                cancelOrderCb:
+                                                    _cancelOrderConfirmation,
+                                              );
+                                            },
+                                          ),
+                                        ))
+                                      ],
+                                    ),
+                                  )
+                            : this._errorAfterFetch!
+                                ? Container(
+                                    alignment: Alignment.center,
+                                    padding: EdgeInsets.all(8),
+                                    child: _FetchErrorWidget(),
+                                  )
+                                : Center(
+                                    child:
+                                        // _buildWailtin()
+                                        CircularProgressIndicator(
+                                    color: Styles.colorPrimary,
+                                  )))
+                  ]);
+      })),
     );
-        }
+  }
 
 //         _buildWailtin(){
 //     return  Shimmer.fromColors(
@@ -681,7 +695,6 @@ class _FetchErrorWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-
         Icon(Icons.error, color: Colors.red[600], size: 36),
         Text(
           S.of(context).thereWasAnErrorInFetchingTheOrders,
@@ -705,176 +718,135 @@ class _OrderCard extends StatelessWidget {
     final String date = order['date_created'].toString().substring(0, 10);
     return Container(
       // margin: EdgeInsets.symmetric(horizontal: 37.w),
-      padding: EdgeInsets.symmetric(horizontal: 0.w,vertical: 19.h),
+      padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 19.h),
       // height: 54.h,
       width: 280.w,
       decoration: Styles.speicialOfferDecoration.copyWith(
           borderRadius: BorderRadius.all(
-            Radius.circular(0.r),
-          )),
-        child:
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
+        Radius.circular(0.r),
+      )),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-           Column(children: [
+                Column(
+                  children: [
+                    Container(
+                        margin: EdgeInsets.symmetric(horizontal: 15.w),
+                        color: Colors.amberAccent,
 
-           Container(
-           margin: EdgeInsets.symmetric(horizontal: 15.w),
-                color: Colors.amberAccent,
+                        // width: 46.r,
+                        child: Container(
+                            height: 46.r,
+                            width: 46.r,
+                            // margin:
+                            // Provider
+                            //     .of<LocaleProvider>(context, listen: false)
+                            //     .locale
+                            //     .languageCode != "ar" ?
+                            // EdgeInsets.only(left: 22.w, right: 68.w, top: 21.h) :
+                            // EdgeInsets.only(right: 22.w, left: 68.w, top: 21.h),
+                            child: Container(
+                                decoration:
+                                    Styles.shadowPrimaryDecoration.copyWith(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(34.r),
+                                        ),
+                                        boxShadow: []),
+                                child: ClipRRect(
+                                    // color: Colors.black,
 
-                // width: 46.r,
-                child:Container(
-                height: 46.r,
-                width: 46.r,
-                // margin:
-                // Provider
-                //     .of<LocaleProvider>(context, listen: false)
-                //     .locale
-                //     .languageCode != "ar" ?
-                // EdgeInsets.only(left: 22.w, right: 68.w, top: 21.h) :
-                // EdgeInsets.only(right: 22.w, left: 68.w, top: 21.h),
-                child:   Container(
-                        decoration: Styles.shadowPrimaryDecoration.copyWith(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(34.r),
-                            ),
-                            boxShadow: [  ]),
-
-
-                        child:
-
-                        ClipRRect(
-                          // color: Colors.black,
-
-                          borderRadius: BorderRadius.circular(34.r),
-                          child: Image.asset(Assets.PNG_profile)
-                          // item.data['images'].length != 0
-                          //     ? ImageFetcher.getImage(
-                          //     item.data['images'][0]['src'])
-                          //     : ImageFetcher.getImage(""),
-                        )
-                    )
-
-
-                )) ],),
-         Expanded(child:  Container(child:
-          Column(
-
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(child:
-              Text(
-                  "${order['line_items'][0]["name"]}"??"",
-                  style: Styles.boldTextStyle.copyWith(
-                    fontWeight: FontWeight.w700,
-                      fontSize: Styles.fontSize11)
-              ),
-              ),
-              SizedBox(height: 10.h),
-
-              Container(
-              width: 70.w,
-              height: 20.h,
-              decoration: Styles.roundedDecoration.copyWith(
-                color: Styles.ColorStatusOrder.withOpacity(0.33),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(4.r),
+                                    borderRadius: BorderRadius.circular(34.r),
+                                    child: Image.asset(Assets.PNG_profile)
+                                    // item.data['images'].length != 0
+                                    //     ? ImageFetcher.getImage(
+                                    //     item.data['images'][0]['src'])
+                                    //     : ImageFetcher.getImage(""),
+                                    ))))
+                  ],
                 ),
-              ),
-               child:Center(child:
-            Text(
-                order['status'].split('-').join(' '),
-                style: Styles.regularTextStyle.copyWith(
-                  fontWeight: FontWeight.w700,
-                    color: Color(0xff1D8F78),
-
-                    fontSize: Styles.fontSize10)
-            ),)),
-              SizedBox(height: 8.h),
-
-              Container(child:
-              Text(
-                  S.of(context).orderID + "${order['id']}",
-                  style: Styles.boldTextStyle.copyWith(
-                      fontWeight: FontWeight.w400,
-                      fontSize: Styles.fontSize11
-
-                  )
-              ),
-              ),
-              SizedBox(height: 8),
-
-              Text(
-                S.of(context).placedOn +
-                    date.split('-').reversed.join('//'),
-                style:Styles.regularTextStyle.copyWith(
-
-                    fontWeight: FontWeight.w700,
-                    fontSize: Styles.fontSize11
-                )
-            ),
-            SizedBox(height: 8),
-
-            Text(
-                S.of(context).items+ '${order['line_items'].length} ${order['line_items'].length > 1 ? 'items' : 'item'}',
-                style: Styles.regularTextStyle.copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontSize: Styles.fontSize11                )
-            ),
-
-
-            SizedBox(height: 8),
-
-          ],)
-            ,))
-
-          ]),
-
-
-
-
-
-
-              InkWell(
-
-                onTap: () =>
-
-                    Utils.pushNewScreenWithRouteSettings(context,
-                      settings:
-                      RouteSettings(name: RoutePaths.OrderDetails),
-                      withNavBar: false,
-                      screen:  OrderDetails(order
+                Expanded(
+                    child: Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        child: Text("${order['line_items'][0]["name"]}" ?? "",
+                            style: Styles.boldTextStyle.copyWith(
+                                fontWeight: FontWeight.w700,
+                                fontSize: Styles.fontSize11)),
                       ),
-                    ),
-                child:Center(child:
-                Container(
-                  width: 300.w,
-                  // height: 30.h,
-                padding: EdgeInsets.symmetric(vertical:10.h),
-                decoration: BoxDecoration(
-    border: Border.all(color: Styles.colorPrimary)
-    ),
-                  child:
-                      Center(child:
-                Text(
-                  S.of(context).markAsReceived,
-                  style: Styles.boldTextStyle.copyWith(fontSize:
-                  Styles.fontSize11,color:Styles.colorPrimary )
-                ),))
-              )),
-
-               SizedBox(width: 8),
-
-            ],
-          ),
-
+                      SizedBox(height: 10.h),
+                      Container(
+                          width: 70.w,
+                          height: 20.h,
+                          decoration: Styles.roundedDecoration.copyWith(
+                            color: Styles.ColorStatusOrder.withOpacity(0.33),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(4.r),
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(order['status'].split('-').join(' '),
+                                style: Styles.regularTextStyle.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xff1D8F78),
+                                    fontSize: Styles.fontSize10)),
+                          )),
+                      SizedBox(height: 8.h),
+                      Container(
+                        child: Text(S.of(context).orderID + "${order['id']}",
+                            style: Styles.boldTextStyle.copyWith(
+                                fontWeight: FontWeight.w400,
+                                fontSize: Styles.fontSize11)),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                          S.of(context).placedOn +
+                              date.split('-').reversed.join('//'),
+                          style: Styles.regularTextStyle.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: Styles.fontSize11)),
+                      SizedBox(height: 8),
+                      Text(
+                          S.of(context).items +
+                              '${order['line_items'].length} ${order['line_items'].length > 1 ? 'items' : 'item'}',
+                          style: Styles.regularTextStyle.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: Styles.fontSize11)),
+                      SizedBox(height: 8),
+                    ],
+                  ),
+                ))
+              ]),
+          InkWell(
+              onTap: () => Utils.pushNewScreenWithRouteSettings(
+                    context,
+                    settings: RouteSettings(name: RoutePaths.OrderDetails),
+                    withNavBar: false,
+                    screen: OrderDetails(order),
+                  ),
+              child: Center(
+                  child: Container(
+                      width: 300.w,
+                      // height: 30.h,
+                      padding: EdgeInsets.symmetric(vertical: 10.h),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Styles.colorPrimary)),
+                      child: Center(
+                        child: Text(S.of(context).markAsReceived,
+                            style: Styles.boldTextStyle.copyWith(
+                                fontSize: Styles.fontSize11,
+                                color: Styles.colorPrimary)),
+                      )))),
+          SizedBox(width: 8),
+        ],
+      ),
     );
   }
 }

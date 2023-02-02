@@ -153,7 +153,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         if (address == null || address.length == 0) {
           return Scaffold(
               // backgroundColor: Styles.colorBackGround,
-key: _scaffoldKey,
+              key: _scaffoldKey,
               body: SafeArea(
                   child: SingleChildScrollView(
                       child: Container(
@@ -257,7 +257,7 @@ key: _scaffoldKey,
 
                             // padding: EdgeInsets.symmetric(vertical: 0, horizontal:37.w),
                             child: TextField(
-                              readOnly: key=="email"?true:false,
+                              readOnly: key == "email" ? true : false,
                               controller: _controller,
                               onSubmitted: (value) {
                                 _controller.text = value!;
@@ -277,20 +277,24 @@ key: _scaffoldKey,
                             ));
                       }),
 
-
                   _isLoading
                       ? Container(
-                      color: Colors.white,
-                      child: Center(child: CircularProgressIndicator(color: Styles.colorPrimary,)))
-                      : SizedBox(height: 0, width: 0), Container(
-
+                          color: Colors.white,
+                          child: Center(
+                              child: CircularProgressIndicator(
+                            color: Styles.colorPrimary,
+                          )))
+                      : SizedBox(height: 0, width: 0),
+                  Container(
                     // padding: EdgeInsets.all(20),
                     // height: 150.h,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       // crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        SizedBox(height: 32.h,),
+                        SizedBox(
+                          height: 32.h,
+                        ),
                         // CommonSizes.hSmallSpace,
                         InkWell(
                           child: Container(
@@ -302,12 +306,11 @@ key: _scaffoldKey,
                                   Radius.circular(27.r),
                                 ),
                               ),
-                              child:
-                              Center(child: Text(
-                                  S.of(context).updateProfile,
-                                  style: Styles.boldTextStyle.copyWith(fontSize: Styles.fontSize24,color: Colors.white)
-
-                              ))),
+                              child: Center(
+                                  child: Text(S.of(context).updateProfile,
+                                      style: Styles.boldTextStyle.copyWith(
+                                          fontSize: Styles.fontSize24,
+                                          color: Colors.white)))),
                           onTap: () async {
                             this.setState(() {
                               _isLoading = true;
@@ -324,29 +327,33 @@ key: _scaffoldKey,
                               _isLoading = false;
                             });
 
-                            _scaffoldKey.currentState!.showSnackBar(SnackBar(
-                                content:
-                                Text(msg ?? S.of(context).errorOccured)));
+                            ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+                                .showSnackBar(SnackBar(
+                                    content: Text(
+                                        msg ?? S.of(context).errorOccured)));
                             if (msg == "Updated") {
                               Navigator.of(context).pop();
                             }
                           },
                         ),
-                        SizedBox(height: 15.h,),
+                        SizedBox(
+                          height: 15.h,
+                        ),
                         InkWell(
                           child: Container(
                               width: 280.w,
                               height: 54.h,
                               color: Colors.transparent,
-
-                              child:
-                              Center(child: Text(
+                              child: Center(
+                                  child: Text(
                                 S.of(context).cancel,
-                                style:Styles.meduimTextStyle,
+                                style: Styles.meduimTextStyle,
                               ))),
                           onTap: () => Navigator.pop(context),
                         ),
-                        SizedBox(height: 32.h,),
+                        SizedBox(
+                          height: 32.h,
+                        ),
                       ],
                     ),
                   ),
@@ -367,7 +374,7 @@ key: _scaffoldKey,
                   //     crossAxisAlignment: CrossAxisAlignment.stretch,
                   //     children: <Widget>[
                   //       Expanded(
-                  //         child: RaisedButton(
+                  //         child: ElevatedButton(
                   //           shape: RoundedRectangleBorder(
                   //             borderRadius:
                   //                 BorderRadius.all(Radius.circular(20)),
@@ -387,7 +394,7 @@ key: _scaffoldKey,
                   //       ),
                   //       CommonSizes.hSmallSpace,
                   //       Expanded(
-                  //         child: RaisedButton(
+                  //         child: ElevatedButton(
                   //           textColor: Colors.white,
                   //           shape: RoundedRectangleBorder(
                   //             borderRadius:

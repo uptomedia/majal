@@ -17,7 +17,10 @@ class QuantityToggle extends StatelessWidget {
   final double scale;
   QuantityToggle(this.item,
       {this.margin = const EdgeInsets.symmetric(horizontal: 4),
-        required this.height,required this.width,this.raduis:12,this.scale:0.6,
+      required this.height,
+      required this.width,
+      this.raduis: 12,
+      this.scale: 0.6,
       this.iconSize = 26});
   @override
   Widget build(BuildContext context) {
@@ -27,100 +30,87 @@ class QuantityToggle extends StatelessWidget {
     return Consumer<CartManager>(
       builder: (context, cart, child) {
         // if (cart.isPresentInCart(item)) {
-          return
-            Container(
-                // decoration: Styles.roundedDecoration.copyWith(
-                //     color: Styles.colorPrimary,
-                //     borderRadius: BorderRadius.all(
-                //       Radius.circular(this.raduis),
-                //     )),
-                child: Container(
-                  // width: width ,
-                  height: height,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+        return Container(
+          // width: width ,
+          height: height,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                  // width: (height*80/150).h ,
+                  // height:  (height*20/150).h,
+                  child: Container(
+                width: 20.r,
+                height: 20.r,
+                decoration: new BoxDecoration(
+                  color: Styles.colorRemoveIcon,
+                  shape: BoxShape.circle,
+                ),
+                child: InkWell(
+                    child: Center(
+                        child: Icon(
+                      Icons.remove,
+                      size: 20.r,
+                      color: Styles.ColorWhite,
+                      // size:  (height*40/150).h,
+                    )),
+                    onTap: () {
+                      Provider.of<CartManager>(context, listen: false)
+                          .decrementQuantityOfProduct(item);
+                    }),
+              )),
+              SizedBox(
+                width: 8.w,
+              ),
+              Expanded(
+                  child: Container(
 
-                      SizedBox(
-                          // width: (height*80/150).h ,
-                          // height:  (height*20/150).h,
-                          child:
-
-                    Container(
-                    width:  20.r  ,
-                    height: 20.r ,
-                    decoration: new BoxDecoration(
-                      color: Styles.colorRemoveIcon,
-                      shape: BoxShape.circle,
-                    ),
-                          child:
-                          InkWell(
-                              child: Center(
-                                  child: Icon(
-                                    Icons.remove,
-                                    size: 20.r,
-                                    color: Styles.ColorWhite,
-                                    // size:  (height*40/150).h,
-                                  )),
-                              onTap: () {
-                                Provider.of<CartManager>(context, listen: false)
-                                    .decrementQuantityOfProduct(item);
-                              }
-                          ),)) ,
-                      SizedBox(width: 8.w,),
-                       Expanded(child:
-                      Container(
-
-                        // width: width,
-                       height: height  ,
+                      // width: width,
+                      height: height,
                       decoration: Styles.speicialOfferDecoration,
-                           child: Center(
-                            child: Text(
-                              "${this.item.quantity}",
-                              style: Styles.boldTextStyle.copyWith(
-                                  fontSize: Styles.fontSize11,
-                                  fontWeight: FontWeight.w700,
-                                  color: Styles.ColorText),
+                      child: Center(
+                        child: Text(
+                          "${this.item.quantity}",
+                          style: Styles.boldTextStyle.copyWith(
+                              fontSize: Styles.fontSize11,
+                              fontWeight: FontWeight.w700,
+                              color: Styles.ColorText),
+                        ),
+                      ))),
+              SizedBox(
+                width: 8.w,
+              ),
+              SizedBox(
+                  width: 20.r,
+                  height: 20.r,
+                  child: Container(
+                      width: 20.r,
+                      height: 20.r,
+                      decoration: new BoxDecoration(
+                        color: Styles.colorPrimary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: InkWell(
+                          child: Center(
+                            child: Icon(
+                              Icons.add_outlined,
+                              color: Colors.white,
+                              size: 20.r,
+                              // size:  (height*40/150).h,
                             ),
-                          ))),
-                      SizedBox(width: 8.w,),
-                       SizedBox(
-
-                          width:  20.r  ,
-                          height: 20.r ,
-                          child: Container(
-                      width:  20.r  ,
-        height: 20.r ,
-
-        decoration: new BoxDecoration(
-        color: Styles.colorPrimary,
-        shape: BoxShape.circle,
-        ),
-        child: InkWell(
-                              child: Center(
-                                  child: Icon(
-                                    Icons.add_outlined,
-                                    color: Colors.white,
-                                    size: 20.r,
-                                    // size:  (height*40/150).h,
-
-                                  ),),
-                              onTap: () {
-                                Provider.of<CartManager>(context, listen: false)
-                                    .incrementQuantityOfProduct(item);
-                              }
-                          )) ),
-                      SizedBox(width: 8.w,),
-                     ],
-                  ),
-                ));
-
-
-
-
-
-       },
+                          ),
+                          onTap: () {
+                            Provider.of<CartManager>(context, listen: false)
+                                .incrementQuantityOfProduct(item);
+                          }))),
+              SizedBox(
+                width: 8.w,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

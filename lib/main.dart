@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
- import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grodudes/pages/account/LogInPage.dart';
@@ -38,15 +38,13 @@ import 'l10n/L10n.dart';
 import 'l10n/locale_provider.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
-
 void main() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
-      statusBarColor:Styles.colorPrimary,
+      statusBarColor: Styles.colorPrimary,
     ),
-
   );
   await ScreenUtil.ensureScreenSize();
 
@@ -63,12 +61,9 @@ void main() async {
       //   enabled: !kReleaseMode,
       //   builder: (context) =>  // Wrap your app
 
-      Phoenix(
-        child:
-
-      MyApp(prefs)
-      // )
-  ));
+      Phoenix(child: MyApp(prefs)
+          // )
+          ));
 }
 
 String baseUrl = "https://majalpharma.com/";
@@ -122,15 +117,13 @@ class MyApp extends StatelessWidget {
                   ? preferences.getString(SharedPreferencesKeys.LanguageCode)
                   : 'en';
 
-
-              provider.setLocale(getLocal(x),shouldUpdate: false);
+              provider.setLocale(getLocal(x), shouldUpdate: false);
               Constants.currentLocale = provider.locale.languageCode ?? 'en';
-              Constants.scale= provider.scale ?? 1.0;
+              Constants.scale = provider.scale ?? 1.0;
               return ScreenUtilInit(
-
-                  designSize: Size(428*Constants.scale, 928*Constants.scale),//1080, 1920
+                  designSize: Size(428 * Constants.scale,
+                      928 * Constants.scale), //1080, 1920
                   minTextAdapt: true,
-
                   splitScreenMode: true,
                   builder: (BuildContext c) {
                     return MaterialApp(
@@ -142,32 +135,30 @@ class MyApp extends StatelessWidget {
                           GlobalCupertinoLocalizations.delegate,
                           S.delegate
                         ],
-                                      onGenerateRoute: AppRouter.generateRoute,
-
+                        onGenerateRoute: AppRouter.generateRoute,
                         supportedLocales:
                             // const Locale('en', ''), // English, no country code
                             // const Locale('ar', ''),
                             L10n.all,
-                        locale:
-
-                        preferences.containsKey(SharedPreferencesKeys.LanguageCode)
+                        locale: preferences
+                                .containsKey(SharedPreferencesKeys.LanguageCode)
                             ? Locale(x.toString(), '')
                             : provider.locale,
 
-
                         // showPerformanceOverlay: true,
-                        theme: appTheme.copyWith(  primaryColor: Styles.colorPrimary,
-                          visualDensity: VisualDensity.adaptivePlatformDensity,) ,
+                        theme: appTheme.copyWith(
+                          primaryColor: Styles.colorPrimary,
+                          visualDensity: VisualDensity.adaptivePlatformDensity,
+                        ),
                         // theme: appTheme,
 // initialRoute: RoutePaths.SplashScreen ,
-                        home:
-                        preferences.containsKey(SharedPreferencesKeys.OnBoarding)?
-                        preferences.getBool(SharedPreferencesKeys.OnBoarding)!?
-                        SplashScreen(): OnBoardScreen(preferences:preferences)
-                    :
-                        OnBoardScreen(preferences:preferences)
-                    );
-
+                        home: preferences
+                                .containsKey(SharedPreferencesKeys.OnBoarding)
+                            ? preferences
+                                    .getBool(SharedPreferencesKeys.OnBoarding)!
+                                ? SplashScreen()
+                                : OnBoardScreen(preferences: preferences)
+                            : OnBoardScreen(preferences: preferences));
                   });
             }),
       ),
