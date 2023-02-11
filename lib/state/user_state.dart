@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grodudes/helper/WooCommerceAPI.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../secret.dart';
 
 enum logInStates { loggedIn, loggedOut, pending, logInFailed }
@@ -88,6 +90,20 @@ class UserManager with ChangeNotifier {
         this._secureStorage.write(
             key: "auth_data",
             value: base64.encode(utf8.encode("$username:$password")));
+        const String localCartStorageKey = 'grodudes_cart_data';
+        String? criddentials = await this._secureStorage.read(key: "auth_data");
+        Map<String, String> headers = {
+          HttpHeaders.contentTypeHeader: 'application/json',
+          HttpHeaders.authorizationHeader: 'Basic ' + criddentials!
+        };
+        var response = await http.get(
+          Uri.parse("${Secret.baseUrl}/wp-json/cocart/v2/cart/"),
+          headers: headers,
+        );
+        print(response.body);
+        Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+        final SharedPreferences prefs = await _prefs;
+        await prefs.setString(localCartStorageKey, response.body);
       } else {
         this._logInStatus = logInStates.logInFailed;
         _createLoginErrorResponse({});

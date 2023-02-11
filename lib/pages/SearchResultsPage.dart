@@ -128,76 +128,77 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         //         ),
         //   ],
         // ),
-        body:
-        SafeArea(child:
-        SingleChildScrollView(
+        body: SafeArea(
+            child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 43.h,),
-          Container(
-          padding: EdgeInsets.symmetric(
-          horizontal:25.w),
-          // decoration: Styles.textFieldDecoration,
-
-          child: Row(
-            children: <Widget>[
-          Container(
-          // decoration: Styles.tilesDecoration,
-            child:
-              GestureDetector(
-                onTap: () => Navigator.of(context).pop(),
-                child: Icon(
-                  Icons.arrow_back,
-                  size: 24,
-                  // color: GrodudesPrimaryColor.primaryColor[700],
-                )),
+              SizedBox(
+                height: 43.h,
               ),
-              SizedBox(width: 9.w,),
+              Container(
+                  padding: EdgeInsets.symmetric(horizontal: 25.w),
+                  // decoration: Styles.textFieldDecoration,
 
-              Expanded(
-                child:Container(
-                  width: 271.w,
-                  height: 56.h,
-
-                  decoration: Styles.tilesDecoration.copyWith( borderRadius: BorderRadius.all(
-                    Radius.circular(16.r),
-                  ),),
-                child: TextField(
-                  controller: this._searchController,
-                  style: TextStyle(fontSize: 18),
-                  decoration:  Styles.PharmaFieldDecoration(radius: 23.r,
-                      hint: S.of(context).search),
-                  onSubmitted: (value) => loadSearch(),
-                ),
-              )),
-            SizedBox(width: 9.w,),
-            Container(
-              padding: EdgeInsets.all(8.w),
-              decoration:Styles.tilesDecoration.copyWith( borderRadius: BorderRadius.all(
-    Radius.circular(16.r))),
-                width: 56.h,
-                height: 56.h,
-
-                child:
-              GestureDetector(
-                onTap: (){
-    setState(() {
-                    showFilter = !showFilter;
-                  });
-                },
-
-                child:
-                    // SizedBox(width: 26.w,height: 26.w,child:
-                SvgPicture.asset(Assets.SVG_filter))
-                // Icon(
-                //   Icons.search,
-                //   size: 24,
-                //   color: GrodudesPrimaryColor.primaryColor[700],
-                // ),
-              // )
-        ),
-            ],
-          )),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        // decoration: Styles.tilesDecoration,
+                        child: GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            child: Icon(
+                              Icons.arrow_back,
+                              size: 24,
+                              // color: GrodudesPrimaryColor.primaryColor[700],
+                            )),
+                      ),
+                      SizedBox(
+                        width: 9.w,
+                      ),
+                      Expanded(
+                          child: Container(
+                        width: 271.w,
+                        height: 56.h,
+                        decoration: Styles.tilesDecoration.copyWith(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(16.r),
+                          ),
+                        ),
+                        child: TextField(
+                          controller: this._searchController,
+                          style: TextStyle(fontSize: 18),
+                          decoration: Styles.PharmaFieldDecoration(
+                              radius: 23.r, hint: S.of(context).search),
+                          onSubmitted: (value) => loadSearch(),
+                        ),
+                      )),
+                      SizedBox(
+                        width: 9.w,
+                      ),
+                      Container(
+                          padding: EdgeInsets.all(8.w),
+                          decoration: Styles.tilesDecoration.copyWith(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16.r))),
+                          width: 56.h,
+                          height: 56.h,
+                          child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  showFilter = !showFilter;
+                                });
+                              },
+                              child:
+                                  // SizedBox(width: 26.w,height: 26.w,child:
+                                  SvgPicture.asset(Assets.SVG_filter))
+                          // Icon(
+                          //   Icons.search,
+                          //   size: 24,
+                          //   color: GrodudesPrimaryColor.primaryColor[700],
+                          // ),
+                          // )
+                          ),
+                    ],
+                  )),
 
               showFilter
                   ? _buildMultySelect()
@@ -213,77 +214,79 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
               // showFilter?
 
               Container(
-               //   height: //!showFilter
+                  //   height: //!showFilter
                   //    ?
-             //     MediaQuery.of(context).size.height,
+                  //     MediaQuery.of(context).size.height,
                   //     : MediaQuery.of(context).size.height * 0.6,
                   child: FutureBuilder(
-                    future: Provider.of<ProductsManager>(context, listen: false)
-                        .filterProducts(filter),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState != ConnectionState.done)
-                        return Center(child: CircularProgressIndicator(color: Styles.colorPrimary,));
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Container(
-                            padding: EdgeInsets.all(16),
-                            child: Text(
-                              S.of(context).anErrorOccuredPleaseTryAgain,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        );
-                      }
-                      if (snapshot.hasData) {
-                        List<Product> items = snapshot.data as List<Product>;
-                        print(MediaQuery.of(context).size.aspectRatio.toString());
-                        return
-                        Container(
-                            padding: EdgeInsets.symmetric(horizontal: 50,vertical: 10),
-                            child:
-                            ListView.separated(
+                future: Provider.of<ProductsManager>(context, listen: false)
+                    .filterProducts(filter),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done)
+                    return Center(
+                        child: CircularProgressIndicator(
+                      color: Styles.colorPrimary,
+                    ));
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          S.of(context).anErrorOccuredPleaseTryAgain,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    );
+                  }
+                  if (snapshot.hasData) {
+                    List<Product> items = snapshot.data as List<Product>;
+                    print(MediaQuery.of(context).size.aspectRatio.toString());
+                    return Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                        child: ListView.separated(
+                            separatorBuilder: (context, index) => SizedBox(
+                                  height: 28.h,
+                                ),
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount:
+                                items.length, // > 4 ? 4 : productIds.length,
+                            itemBuilder: (context, index) =>
+                                ProductCardAumet(items[index])));
+                    // GridView.builder(
+                    //   shrinkWrap:true,
+                    //   physics: BouncingScrollPhysics(),
+                    //
+                    //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    // crossAxisCount: 2,
+                    //     childAspectRatio:  0.85,
+                    //
+                    //  crossAxisSpacing: 10.h,
+                    // mainAxisSpacing: 20.h,
+                    // ),
+                    // // padding: EdgeInsets.all(16),
+                    // itemCount: items.length,
+                    // itemBuilder: (context, index)  =>
+                    //                       // ListView.separated(
+                    //                       // padding: EdgeInsets.all(8),
+                    //                       // itemCount: items.length,
+                    //                       // itemBuilder: (context, index) =>
+                    // ProductFilterListTile(items[index]),
+                    //                       // separatorBuilder: (BuildContext context, int index) {
+                    //                       //   return SizedBox(height: 45.h,);
+                    //                       // },
+                    //                     )
+                    //                     );
 
-                                separatorBuilder: (context, index) => SizedBox(height: 28.h,),
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-
-                                itemCount: items.length,// > 4 ? 4 : productIds.length,
-                                itemBuilder: (context, index) =>
-
-
-                                    ProductCardAumet(
-                                        items[index]))
-                        );
-    // GridView.builder(
-    //   shrinkWrap:true,
-    //   physics: BouncingScrollPhysics(),
-    //
-    //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    // crossAxisCount: 2,
-    //     childAspectRatio:  0.85,
-    //
-    //  crossAxisSpacing: 10.h,
-    // mainAxisSpacing: 20.h,
-    // ),
-    // // padding: EdgeInsets.all(16),
-    // itemCount: items.length,
-    // itemBuilder: (context, index)  =>
-    //                       // ListView.separated(
-    //                       // padding: EdgeInsets.all(8),
-    //                       // itemCount: items.length,
-    //                       // itemBuilder: (context, index) =>
-    // ProductFilterListTile(items[index]),
-    //                       // separatorBuilder: (BuildContext context, int index) {
-    //                       //   return SizedBox(height: 45.h,);
-    //                       // },
-    //                     )
-    //                     );
-
-                      }
-                      return Center(child: CircularProgressIndicator(color: Styles.colorPrimary,));
-                    },
-                  )
+                  }
+                  return Center(
+                      child: CircularProgressIndicator(
+                    color: Styles.colorPrimary,
+                  ));
+                },
+              )
                   // :
                   //  FutureBuilder(
                   //   future:
@@ -323,105 +326,102 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   }
 
   Widget _buildMultySelect() {
-    final _items = Provider.of<ProductsManager>(context, listen: false).categories.values.toList()
+    final _items = Provider.of<ProductsManager>(context, listen: false)
+        .categories
+        .values
+        .toList()
         .map((Category) => MultiSelectItem(Category, Category.data["name"]))
         .toList();
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 20.w,),
+        padding: EdgeInsets.symmetric(
+          vertical: 20.w,
+        ),
         child: MultiSelectChipField<Category>(
           items: _items,
           initialValue: [],
           decoration: Styles.multySelectDecoration,
-          title:
-
-          Text("   "+S.of(context).categoryFilters,style: Styles.meduimTextStyle.copyWith(
-            fontSize: Styles.fontSize25
-
-          ),),
+          title: Text(
+            "   " + S.of(context).categoryFilters,
+            style: Styles.meduimTextStyle.copyWith(fontSize: Styles.fontSize25),
+          ),
           headerColor: Colors.transparent,
 
           // decoration: BoxDecoration(
           //   border: Border.all(color: GrodudesPrimaryColor.primaryColor[700]!, width: 1.8),
           // ),
 
-          itemBuilder: (item,state){
-            return
-
-              InkWell(
-                onTap: () {
-                  // filter.body!.categroyIds.contains(item.value.data["id"].toString()??"0");
-                  // currCategoryIds = "";
-                  // filter.body!.withCategoryIds = true;
-                  // for (int i = 0; i < item.values.length; i++) {
-                  //   currCategoryIds =
-                  //       currCategoryIds + values[i].data["id"].toString() + ",";
-                  // }
-                  // filter.body!.categroyIds = currCategoryIds;
-                  print(item.value.data["name"]);
-                  if(!item.selected ){
-                    filter.body!.categroyIds =
-                        filter.body!.categroyIds! +  item.value.data["id"].toString() + ",";
-                  }else{
-
-                  var ids=filter.body!.categroyIds!.split(",");
-                  currCategoryIds="";
-     for (int i = 0; i < ids.length; i++) {
-    if( item.value.data["id"]!=ids[i])
-    {
-    currCategoryIds =
-    currCategoryIds + ids[i].toString() + ",";
-
-    }else{
-    currCategoryIds =
-    currCategoryIds ;
-    }
-
-    }
+          itemBuilder: (item, state) {
+            return InkWell(
+              onTap: () {
+                // filter.body!.categroyIds.contains(item.value.data["id"].toString()??"0");
+                // currCategoryIds = "";
+                // filter.body!.withCategoryIds = true;
+                // for (int i = 0; i < item.values.length; i++) {
+                //   currCategoryIds =
+                //       currCategoryIds + values[i].data["id"].toString() + ",";
+                // }
+                // filter.body!.categroyIds = currCategoryIds;
+                print(item.value.data["name"]);
+                if (!item.selected) {
+                  filter.body!.categroyIds = filter.body!.categroyIds! +
+                      item.value.data["id"].toString() +
+                      ",";
+                } else {
+                  var ids = filter.body!.categroyIds!.split(",");
+                  currCategoryIds = "";
+                  for (int i = 0; i < ids.length; i++) {
+                    if (item.value.data["id"] != ids[i]) {
+                      currCategoryIds =
+                          currCategoryIds + ids[i].toString() + ",";
+                    } else {
+                      currCategoryIds = currCategoryIds;
+                    }
                   }
+                }
 
-                  item.selected=!item.selected;
-                  setState(() {
-
-                  });
-                },
-                child:
-
-              Container(
-              width: 170.w,
-              padding: EdgeInsets.all(10),
-              margin: EdgeInsets.symmetric(horizontal: 10.w,vertical:2),
-              // height: 70.h,
-              decoration:!item.selected?
-
-              Styles.tilesDecoration.copyWith(
-                  boxShadow: [
-                    BoxShadow(
-                    color:  Styles.shadowColor.withOpacity(0.14),
-                    blurRadius: 6,
-                    offset: Offset(3, 3), // changes position of shadow
-                  )],
-              ):
-              Styles.tilesDecoration.copyWith(
-                color: Styles.colorPrimary,
-                  boxShadow: [
-                    BoxShadow(
-                    color:  Styles.shadowColor.withOpacity(0.14),
-                    blurRadius: 6,
-                    offset: Offset(3, 3), // changes position of shadow
-                  )],
-              )
-                ,child:
-            Center(child:Text(item.value.data["name"]??"",style:!item.selected?
-            Styles.regularTextStyle.copyWith(
-              fontSize: Styles.fontSize15
-            ):Styles.regularTextStyle.copyWith(
-              fontSize: Styles.fontSize15,color: Colors.white
-            ),
-            )
-            ),),);
+                item.selected = !item.selected;
+                setState(() {});
+              },
+              child: Container(
+                width: 170.w,
+                padding: EdgeInsets.all(10),
+                margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2),
+                // height: 70.h,
+                decoration: !item.selected
+                    ? Styles.tilesDecoration.copyWith(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Styles.shadowColor.withOpacity(0.14),
+                            blurRadius: 6,
+                            offset: Offset(3, 3), // changes position of shadow
+                          )
+                        ],
+                      )
+                    : Styles.tilesDecoration.copyWith(
+                        color: Styles.colorPrimary,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Styles.shadowColor.withOpacity(0.14),
+                            blurRadius: 6,
+                            offset: Offset(3, 3), // changes position of shadow
+                          )
+                        ],
+                      ),
+                child: Center(
+                    child: Text(
+                  item.value.data["name"] ?? "",
+                  style: !item.selected
+                      ? Styles.regularTextStyle
+                          .copyWith(fontSize: Styles.fontSize15)
+                      : Styles.regularTextStyle.copyWith(
+                          fontSize: Styles.fontSize15, color: Colors.white),
+                )),
+              ),
+            );
           },
           // selectedChipColor: ,
-          selectedTextStyle:Styles.regularTextStyle.copyWith(fontSize: Styles.fontSize20),
+          selectedTextStyle:
+              Styles.regularTextStyle.copyWith(fontSize: Styles.fontSize20),
           onTap: (values) {
             currCategoryIds = "";
             filter.body!.withCategoryIds = true;

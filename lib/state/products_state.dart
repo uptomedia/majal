@@ -16,6 +16,7 @@ const productsPerPage = 50;
 class ProductsManager with ChangeNotifier {
   Map<int, Product> products = {};
   Map<int, Category> categories = {};
+  Map<int, Category> tags = {};
   DataFull dataFull = new DataFull(
       localWishItems: [],
       localCartItems: [],
@@ -59,6 +60,7 @@ class ProductsManager with ChangeNotifier {
 
   setProductsFromLocalCart(List<Product> localCartProducts) {
     localCartProducts.forEach((item) => this._addProduct(item));
+    // notifyListeners();
   }
 
   _addProduct(Product item) {
@@ -94,6 +96,33 @@ class ProductsManager with ChangeNotifier {
     }
   }
 
+  Future fetchAllProductTags(
+      {bool shouldupdate: true, bool fromSplash = false}) async {
+    this.ApiCall++;
+
+    if (this.tags.values.length > 0) return true;
+    List<dynamic> fetchedTags = [];
+    // if (this.ApiCall < 3) {
+    fetchedTags =
+        await wooCommerceAPI.getAsync('products/tags', apiVersion: 'v3');
+    // }
+    print("fetched Tags" + fetchedTags.toString());
+
+    // .getAsync('products');
+    if (fetchedTags != null && fetchedTags.length > 0) {
+      fetchedTags
+          .where((element) =>
+              element['name'].toString().toLowerCase() != 'uncategorized')
+          .forEach((tag) => tags[tag['id']] = Category(tag));
+      if (shouldupdate) notifyListeners();
+      if (fromSplash) {
+        notifyListeners();
+      }
+      return true;
+    }
+    return true;
+  }
+
   Future<DataFull> fetchAll({bool fromSplash = false}) async {
     List<Product> localCartItems = [];
     List<Product> localWishItems = [];
@@ -107,7 +136,7 @@ class ProductsManager with ChangeNotifier {
         Map<int, int> itemIds = {};
         items.forEach((item) {
           if (item['id'] != null && item['id'] is int) {
-            itemIds[item['id']] = item['quantity'] ?? 1;
+            itemIds[item['id']] = item['quantity']['value'] ?? 1;
           }
         });
         if (itemIds.length > 0) {
@@ -310,17 +339,17 @@ class ProductsManager with ChangeNotifier {
     }
     this.ApiCall++;
     List<dynamic> productsData = [];
-    if (this.ApiCall <= 3) {
-      productsData = await this
-          .wooCommerceAPI
-          .getAsync('products?per_page=50&orderby=popularity&order=desc',
-              apiVersion: 'v3')
-          .timeout(Duration(seconds: 60))
-          .catchError((err) {
-        print('fetching popular products: $err');
-        throw err;
-      });
-    }
+    // if (this.ApiCall <= 3) {
+    productsData = await this
+        .wooCommerceAPI
+        .getAsync('products?per_page=50&orderby=popularity&order=desc',
+            apiVersion: 'v3')
+        .timeout(Duration(seconds: 60))
+        .catchError((err) {
+      print('fetching popular products: $err');
+      throw err;
+    });
+    // }
     print(productsData.toString());
     if (productsData == null) throw FlutterError('Failed to fetch products');
     productsData.forEach((item) {
@@ -335,6 +364,30 @@ class ProductsManager with ChangeNotifier {
       notifyListeners();
     }
     return true;
+  }
+
+  Future fetchFilteredProducts(FilterParams searchQuery) async {
+    popularProductIds = {};
+    products = {};
+    // await this.fetchAll();
+    if (searchQuery.body == null) {
+      return await this.fetchPopularProducts();
+    } else {
+      List<dynamic> searchedProductsData = await wooCommerceAPI
+          .getAsync('products?per_page=50&' + searchQuery.urlParams,
+              apiVersion: 'v3')
+          .timeout(Duration(seconds: 60))
+          .catchError((err) {
+        print('fetching popular products: $err');
+        throw err;
+      });
+      searchedProductsData.forEach((item) {
+        item['in_stock'] = item['stock_status'] == 'instock';
+        this._addProduct(Product(item));
+        this.popularProductIds.add(item['id']);
+      });
+      return true;
+    }
   }
 
   Future<List<Product>> searchProducts(String searchQuery) async {

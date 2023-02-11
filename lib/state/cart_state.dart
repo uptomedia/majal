@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:grodudes/state/products_state.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:grodudes/helper/WooCommerceAPI.dart';
 import 'package:grodudes/models/Product.dart';
 import 'package:grodudes/models/coupon.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/disturber.dart';
@@ -76,57 +78,34 @@ class CartManager with ChangeNotifier {
   setCartItemsFromLocalData(List<Product> products, String key, double total2) {
     cartItems = [];
     print(total2);
+    // print(products[0].data);
     cart_key = key;
     total = total2;
     if (this.cartItems.length > 0) return;
     products.forEach((item) {
       this.cartItems.add(item);
     });
-    this.cartItems.forEach((item) {
-      bool exited = false;
-      print(item.data);
-      if (item.data["tags"] is List) {
-        if (item.data['tags'].length > 0)
-          for (int j = 0; j < item.data['tags'].length; j++) {
-            exited = false;
-            for (int i = 0; i < distrubersList.length; i++) {
-              if (distrubersList[i].id == item.data['tags'][j]['id']) {
-                exited = true;
-              }
-            }
-
-            // if (!exited) {
-            //   distrubersList.add(new Disturber(
-            //     id: item.data['tags'][j]['id'],
-            //     name: item.data['tags'][j]['name'],
-            //     imagePath: item.data['tags'][j]['path'],
-            //   ));
-            // }
-          }
-      }
-    });
     filterCartItems = cartItems;
     // notifyListeners();
     // calculateTotal();
-    loadData();
   }
 
   calculateTotal() {
     loadData();
-    total = 0;
-    totalFiltered = 0;
-    cartItems.forEach((element) {
-      if (element.data['price'] != null)
-        total = total +
-            (double.tryParse(element.data['price'] ?? '0.0') ?? 0) *
-                element.quantity;
-    });
-    filterCartItems.forEach((element) {
-      if (element.data['price'] != null)
-        totalFiltered = totalFiltered +
-            (double.tryParse(element.data['price'] ?? '0.0') ?? 0) *
-                element.quantity;
-    });
+    // total = 0;
+    // totalFiltered = 0;
+    // cartItems.forEach((element) {
+    //   if (element.data['price'] != null)
+    //     total = total +
+    //         (double.tryParse(element.data['price'] ?? '0.0') ?? 0) *
+    //             element.quantity;
+    // });
+    // filterCartItems.forEach((element) {
+    //   if (element.data['price'] != null)
+    //     totalFiltered = totalFiltered +
+    //         (double.tryParse(element.data['price'] ?? '0.0') ?? 0) *
+    //             element.quantity;
+    // });
   }
 
   addCartItem(Product item, {int quantity = 1}) async {
@@ -282,10 +261,11 @@ class CartManager with ChangeNotifier {
     return false;
   }
 
-  getIsPresentInCart(Product item) {
+  Product? getIsPresentInCart(Product item) {
     for (final cartItem in cartItems) {
       if (cartItem.isSameAs(item)) return cartItem;
     }
+    return null;
   }
 
   isPresentInWishList(Product item) {
@@ -350,7 +330,7 @@ class CartManager with ChangeNotifier {
   }
 
   decrementQuantityOfProduct(Product item) async {
-    print(wpUserInfo);
+    // print(wpUserInfo);
     for (final cartItem in cartItems) {
       if (cartItem.isSameAs(item)) {
         if (cartItem.quantity == 1) {
@@ -443,17 +423,29 @@ class CartManager with ChangeNotifier {
   }
 
   Future loadData() async {
+    List<Product> cart = [];
     List<Product> localCartItems = [];
     List<Product> localWishItems = [];
     String cartKey = "";
     try {
+      String? criddentials = await this._secureStorage.read(key: "auth_data");
+      Map<String, String> headers = {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: 'Basic ' + criddentials!
+      };
+      var response = await http.get(
+        Uri.parse("${Secret.baseUrl}/wp-json/cocart/v2/cart/"),
+        headers: headers,
+      );
+      print(response.body);
       Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
       final SharedPreferences prefs = await _prefs;
+      await prefs.setString(localCartStorageKey, response.body);
       String? cartData = prefs.getString(localCartStorageKey);
       String? wishData = prefs.getString(localWishStorageKey);
       if (cartData != null) {
         var items = json.decode(cartData);
-        total = double.parse(items["totals"]["total"]) ?? 0.0;
+        total = (double.parse(items["totals"]["total"]) / 100) ?? 0.0;
         cartKey = items["cart_key"];
         print(items);
         Map<int, Map<String, dynamic>> itemIds = {};
@@ -470,11 +462,11 @@ class CartManager with ChangeNotifier {
         if (itemIds.length > 0) {
           List<dynamic> fetchedCartItems =
               await fetchCartItems(itemIds.keys.toList());
-          fetchedCartItems.forEach((item) {
+          (items["items"] as List<dynamic>).forEach((item) {
             Product product = Product(item);
-            product.quantity = itemIds[item['id']]!["quantity"] ?? 1;
-            product.item_key = itemIds[item['id']]!["item_key"] ?? "";
-            localCartItems.add(product);
+            product.quantity = item["quantity"]["value"] ?? 1;
+            product.item_key = item["item_key"] ?? "";
+            cart.add(product);
           });
         }
       }
@@ -520,12 +512,10 @@ class CartManager with ChangeNotifier {
           }
         }
         cart_key = cartKey;
-        total = total / 100;
+        total = total;
         this.cartItems = [];
-        localCartItems.forEach((item) {
-          if (!isPresentInCart(item)) {
-            this.cartItems.add(item);
-          }
+        cart.forEach((item) {
+          this.cartItems.add(item);
         });
         // this.cartItems.forEach((item) {
         //   bool exited = false;
@@ -543,39 +533,10 @@ class CartManager with ChangeNotifier {
         //   }
         // });
         filterCartItems = cartItems;
-        return {
-          'success': true,
-          'cartItems': localCartItems,
-          'wcUser': wcUserInfo,
-          'wpUser': wpUserInfo,
-          'cart_key': cartKey
-        };
+        // ProductsManager().setProductsFromLocalCart(localCartItems);
       }
     } catch (err) {
       print(err);
     }
-    cart_key = cartKey;
-    total = total / 100;
-    this.cartItems = [];
-    localCartItems.forEach((item) {
-      this.cartItems.add(item);
-    });
-    // this.cartItems.forEach((item) {
-    //   bool exited = false;
-    //   print(item.data);
-    //   if (item.data["tags"] is List) {
-    //     if (item.data['tags'].length > 0)
-    //       for (int j = 0; j < item.data['tags'].length; j++) {
-    //         exited = false;
-    //         for (int i = 0; i < distrubersList.length; i++) {
-    //           if (distrubersList[i].id == item.data['tags'][j]['id']) {
-    //             exited = true;
-    //           }
-    //         }
-    //       }
-    //   }
-    // });
-    filterCartItems = cartItems;
-    return {'success': true, 'cartItems': localCartItems, 'cart_key': cartKey};
   }
 }

@@ -58,7 +58,7 @@ class CategoryCard extends StatelessWidget {
           children: <Widget>[
             Container(
                 width: 110.w,
-                height: 111.h,
+                height: 110.h,
                 margin: EdgeInsets.symmetric(horizontal: 21.w, vertical: 22.h),
                 child: Center(
                     child: Container(
@@ -85,7 +85,7 @@ class CategoryCard extends StatelessWidget {
                       maxLines: 1,
                       textAlign: TextAlign.center,
                       style: Styles.meduimTextStyle
-                          .copyWith(fontSize: Styles.fontSize16),
+                          .copyWith(fontSize: Styles.fontSize10),
                     ),
                   )),
             )
@@ -115,64 +115,65 @@ class _CategoryContentsState extends State<CategoryContents> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _formatName(this.widget.category.data['name']),
-
-          // style: Styles.appBarTextStyle,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            _formatName(this.widget.category.data['name']),
+            style: TextStyle(fontSize: 16, color: Colors.black),
+          ),
+          iconTheme: IconThemeData(
+            color: Colors.black, //change your color here
+          ),
+          backgroundColor: Styles.colorBackGround,
         ),
-        iconTheme: IconThemeData(
-          color: Colors.black, //change your color here
-        ),
-        backgroundColor: Styles.colorBackGround,
-      ),
-      body: FutureBuilder(
-        future: Provider.of<ProductsManager>(context)
-            .fetchCategoryDetails(widget.category),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(Icons.error, color: Colors.red[600]),
-                  Text(
-                    S.of(context).anErrorOccuredWhileLoading,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  ElevatedButton(
-                    child: Text(S.of(context).retry,
-                        style: TextStyle(color: Colors.white)),
-                    onPressed: () => setState(() {}),
-                  )
-                ],
-              ),
-            );
-          }
-          if (snapshot.hasData) {
-            if (snapshot.data['products'] != null) {
-              return ProductsList(snapshot.data['products'] ?? []);
+        body: FutureBuilder(
+          future: Provider.of<ProductsManager>(context)
+              .fetchCategoryDetails(widget.category),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error, color: Colors.red[600]),
+                    Text(
+                      S.of(context).anErrorOccuredWhileLoading,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    ElevatedButton(
+                      child: Text(S.of(context).retry,
+                          style: TextStyle(color: Colors.white)),
+                      onPressed: () => setState(() {}),
+                    )
+                  ],
+                ),
+              );
             }
-            return GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.85,
-                crossAxisSpacing: 10.w,
-                mainAxisSpacing: 10.h,
-              ),
-              padding: EdgeInsets.all(16),
-              itemCount: snapshot.data['categories'].length,
-              itemBuilder: (context, index) =>
-                  CategoryCard(snapshot.data['categories'][index]),
-            );
-          }
-          return Center(
-              child: CircularProgressIndicator(
-            color: Styles.colorPrimary,
-          ));
-        },
+            if (snapshot.hasData) {
+              if (snapshot.data['products'] != null) {
+                return ProductsList(snapshot.data['products'] ?? []);
+              }
+              return GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.85,
+                  crossAxisSpacing: 10.w,
+                  mainAxisSpacing: 10.h,
+                ),
+                padding: EdgeInsets.all(16),
+                itemCount: snapshot.data['categories'].length,
+                itemBuilder: (context, index) =>
+                    CategoryCard(snapshot.data['categories'][index]),
+              );
+            }
+            return Center(
+                child: CircularProgressIndicator(
+              color: Styles.colorPrimary,
+            ));
+          },
+        ),
       ),
     );
   }

@@ -71,7 +71,9 @@ class QuantityToggle extends StatelessWidget {
                       decoration: Styles.speicialOfferDecoration,
                       child: Center(
                         child: Text(
-                          "${this.item.quantity}",
+                          cart.isPresentInCart(item)
+                              ? "${cart.getIsPresentInCart(item)!.quantity}"
+                              : "${this.item.quantity}",
                           style: Styles.boldTextStyle.copyWith(
                               fontSize: Styles.fontSize11,
                               fontWeight: FontWeight.w700,

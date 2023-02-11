@@ -50,122 +50,119 @@ class _RootState extends State<Root> with SingleTickerProviderStateMixin {
     WidgetsBinding.instance!.focusManager.primaryFocus?.unfocus();
     this._searchController!.clear();
     Utils.pushNewScreenWithRouteSettings(context,
-        settings:
-        RouteSettings(name: RoutePaths.SearchResultsPage),
+        settings: RouteSettings(name: RoutePaths.SearchResultsPage),
         withNavBar: false,
-        screen: SearchResultsPage(
-            searchQuery
-        )
-    //);
-    // Navigator.push(
-    //   context,
-    //   CupertinoPageRoute(
-    //     builder: (context) => SearchResultsPage(searchQuery),
-    //   ),
-    );
+        screen: SearchResultsPage(searchQuery)
+        //);
+        // Navigator.push(
+        //   context,
+        //   CupertinoPageRoute(
+        //     builder: (context) => SearchResultsPage(searchQuery),
+        //   ),
+        );
   }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-
         backgroundColor: Styles.colorBackGround,
-       drawer: RootDrawer(),
-      body:
+        drawer: RootDrawer(),
+        body: Container(
+          // height:MediaQuery.of(context).size.height ,
+          child: Column(
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).padding.top,
+              ),
+              Container(
+                // height: 25.h,
+                // width: 360.w,
+                padding: EdgeInsets.only(top: 10.h),
+                // decoration: Styles.textFieldDecoration,
 
-Container(
-   // height:MediaQuery.of(context).size.height ,
-  child:             Column(children: [
-  SizedBox(height:MediaQuery.of(context).padding.top,),
-  Container(
-    // height: 25.h,
-    // width: 360.w,
-    padding: EdgeInsets.only(
-        top:10.h),
-    // decoration: Styles.textFieldDecoration,
+                child: Row(
+                  children: <Widget>[
+                    SizedBox(
+                      width: 16.w,
+                    ),
+                    SizedBox(
+                        width: 26.w,
+                        child: GestureDetector(
+                            onTap: () =>
+                                _scaffoldKey.currentState!.openDrawer(),
+                            child: SvgPicture.asset(
+                              Assets.SVGDrawerIcon,
+                              width: 26.w,
+                            ))),
+                    SizedBox(
+                      width: 16.w,
+                    ),
 
-    child:
-    Row(
-      children: <Widget>[
+                    // Center(child:
+                    Expanded(
+                      child: TextField(
+                        controller: this._searchController,
+                        style: TextStyle(fontSize: 18),
+                        decoration: Styles.PharmaFieldSearchDecoration(
+                            radius: 5.r,
+                            color: Styles.colorSecondary,
+                            hint: S.of(context).search),
+                        onSubmitted: (value) => openSearchPage(value),
+                      ),
+                    ),
+                    // ),
+                    SizedBox(
+                      width: 13.w,
+                    ),
 
-
-        SizedBox(width: 16.w,),
-        SizedBox(width: 26.w,
-            child:
-            GestureDetector(
-                onTap: () =>     _scaffoldKey.currentState!.openDrawer(),
-                   child:
-                SvgPicture.asset(Assets.SVGDrawerIcon,width: 26.w,)
-
-            )),
-        SizedBox(width: 16.w,),
-
-        // Center(child:
-        Expanded(
-          child: TextField(
-            controller: this._searchController,
-            style: TextStyle(fontSize: 18),
-            decoration:  Styles.PharmaFieldSearchDecoration(radius: 5.r,
-                color:Styles.colorSecondary,
-                hint: S.of(context).search),
-            onSubmitted: (value) => openSearchPage(value),
+                    SizedBox(
+                        width: 26.w,
+                        child: Consumer<CartManager>(
+                            builder: (context, userManager, child) {
+                          return Badge(
+                              badgeColor: Styles.colorPrimary,
+                              shape: BadgeShape.circle,
+                              showBadge: Provider.of<CartManager>(context,
+                                          listen: false)
+                                      .cartItems
+                                      .length >
+                                  0,
+                              badgeContent: Text(
+                                  Provider.of<CartManager>(context,
+                                          listen: false)
+                                      .cartItems
+                                      .length
+                                      .toString(),
+                                  style: Styles.boldTextStyle.copyWith(
+                                      color: Styles.colorSecondary,
+                                      fontSize: Styles.fontSize10)),
+                              child: GestureDetector(
+                                  onTap: () {
+                                    Utils.pushNewScreenWithRouteSettings(
+                                        context,
+                                        settings: RouteSettings(
+                                            name: RoutePaths.CartItems),
+                                        withNavBar: false,
+                                        screen: CartItems());
+                                  },
+                                  child: SvgPicture.asset(
+                                    Assets.SVG_cart,
+                                    width: 26.w,
+                                  )));
+                        })),
+                    SizedBox(
+                      width: 16.w,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(child: Home()),
+            ],
           ),
-        ),
-        // ),
-        SizedBox(width: 13.w,),
-
-        SizedBox(
-            width: 26.w,
-
-            child:
-    Consumer<CartManager>(
-    builder: (context, userManager, child) {
-    return
-                Badge(
-                  badgeColor: Styles.colorPrimary,
-                  shape: BadgeShape.circle,
-
-                  showBadge:Provider
-                      .of<CartManager>(context, listen: false).cartItems.length>0 ,
-                    badgeContent: Text( Provider
-                        .of<CartManager>(context, listen: false).cartItems.length.toString(),
-                        style:Styles.boldTextStyle.copyWith(
-                      color: Styles.colorSecondary,
-                          fontSize: Styles.fontSize10
-                    )),
-
-                    child:
-            GestureDetector(
-                onTap:
-                    () {
-                      Utils.pushNewScreenWithRouteSettings(context,
-                          settings:
-                          RouteSettings(name: RoutePaths.CartItems),
-                          withNavBar: false,
-                          screen: CartItems(
-                          ));
-                    }
-                         ,
-                child:
-                SvgPicture.asset(Assets.SVG_cart,width: 26.w,)
-
-            )
-                );    })),
-        SizedBox(width: 16.w,),
-
-      ],
-
-    ),
-  ),
-  Expanded(child:  Home()),
-
-
-],)
-  ,)
-
-    );
+        ));
   }
 }
 // class TriangleTabIndicator extends Decoration {

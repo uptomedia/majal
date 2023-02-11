@@ -1693,8 +1693,8 @@ class S {
   /// `Disturbers`
   String get disturbers {
     return Intl.message(
-      'Disturbers',
-      name: 'disturbers',
+      'Distributors',
+      name: 'distributors',
       desc: '',
       args: [],
     );

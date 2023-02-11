@@ -26,7 +26,8 @@ class CartListItem extends StatefulWidget {
 
 class _CartListItemState extends State<CartListItem> {
   String getTotalPrice() {
-    return (double.parse(widget.item.data['price']) * widget.item.quantity)
+    return ((double.parse(widget.item.data['price']) / 100) *
+                widget.item.quantity)
             .toStringAsFixed(2) ??
         "0";
   }
@@ -34,6 +35,7 @@ class _CartListItemState extends State<CartListItem> {
   bool isdeletable = false;
   @override
   Widget build(BuildContext context) {
+    print(this.widget.item.quantity);
     bool isRTL = Provider.of<LocaleProvider>(context, listen: false)
             .locale
             .languageCode ==
@@ -43,7 +45,7 @@ class _CartListItemState extends State<CartListItem> {
       if (this.widget.item == null || this.widget.item.data['id'] == null) {
         return SizedBox(height: 0);
       }
-      print(widget.item.data['images'][0]['src']);
+      print(widget.item.data['featured_image']);
 
       return Container(
         height: 183.h,
@@ -94,9 +96,9 @@ class _CartListItemState extends State<CartListItem> {
                           borderRadius: BorderRadius.all(
                         Radius.circular(141.r),
                       )),
-                      child: widget.item.data['images'].length != 0
+                      child: widget.item.data['featured_image'] != null
                           ? ImageFetcher.getImage(
-                              widget.item.data['images'][0]['src'])
+                              widget.item.data['featured_image'])
                           : ImageFetcher.getImage(""),
                     )))),
             SizedBox(
@@ -143,7 +145,9 @@ class _CartListItemState extends State<CartListItem> {
                           child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 5.w),
                               child: Text(
-                                this.widget.item.data['price'] ?? 0,
+                                (double.parse(this.widget.item.data['price']) /
+                                        100)
+                                    .toString(),
                                 style: Styles.boldTextStyle.copyWith(
                                     fontSize: Styles.fontSize13,
                                     color: Styles.FontColorBlackDark,
@@ -154,34 +158,35 @@ class _CartListItemState extends State<CartListItem> {
                   SizedBox(
                     height: 5.h,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                          // width: 150.w,
-                          child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 0),
-                              child: Text(
-                                S.of(context).date + " ",
-                                style: Styles.boldTextStyle.copyWith(
-                                    fontSize: Styles.fontSize13,
-                                    color: Styles.FontColorBlackDark,
-                                    fontWeight: FontWeight.w300),
-                              ))),
-                      Container(
-                          // width: 150.w,
-                          child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 0),
-                              child: Text(
-                                getDate(this.widget.item.data['date_modified']),
-                                style: Styles.boldTextStyle.copyWith(
-                                    fontSize: Styles.fontSize13,
-                                    color: Styles.FontColorBlackDark,
-                                    fontWeight: FontWeight.w500),
-                              ))),
-                    ],
-                  ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     Container(
+                  //         // width: 150.w,
+                  //         child: Padding(
+                  //             padding: const EdgeInsets.symmetric(vertical: 0),
+                  //             child: Text(
+                  //               S.of(context).date + " ",
+                  //               style: Styles.boldTextStyle.copyWith(
+                  //                   fontSize: Styles.fontSize13,
+                  //                   color: Styles.FontColorBlackDark,
+                  //                   fontWeight: FontWeight.w300),
+                  //             ))),
+                  //     Container(
+                  //         // width: 150.w,
+                  //         child: Padding(
+                  //             padding: const EdgeInsets.symmetric(vertical: 0),
+                  //             child: Text(
+                  //               "",
+                  //               // getDate(this.widget.item.data['date_modified']),
+                  //               style: Styles.boldTextStyle.copyWith(
+                  //                   fontSize: Styles.fontSize13,
+                  //                   color: Styles.FontColorBlackDark,
+                  //                   fontWeight: FontWeight.w500),
+                  //             ))),
+                  //   ],
+                  // ),
                   SizedBox(
                     height: 5.h,
                   ),
@@ -272,14 +277,16 @@ class _CartListItemState extends State<CartListItem> {
                                         })),
                                 Expanded(child: Container()),
                                 Expanded(
+                                    flex: 3,
                                     child: Center(
-                                  child: Text(
-                                    "${this.widget.item.quantity} ",
-                                    style: Styles.boldTextStyle.copyWith(
-                                        fontSize: Styles.fontSize17,
-                                        color: Styles.ColordecreaseToggleOrder),
-                                  ),
-                                )),
+                                      child: Text(
+                                        this.widget.item.quantity.toString(),
+                                        style: Styles.boldTextStyle.copyWith(
+                                            fontSize: Styles.fontSize17,
+                                            color: Styles
+                                                .ColordecreaseToggleOrder),
+                                      ),
+                                    )),
                                 Expanded(child: Container()),
                                 Container(
                                     decoration: BoxDecoration(

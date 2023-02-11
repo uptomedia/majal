@@ -171,21 +171,23 @@ class _CartItemsState extends State<CartItems>
                 Container(
                   height: 18.h,
                   width: 460.w,
-                  child: Consumer<CartManager>(
-                      builder: (context, cart, child) => Text(
-                            S.of(context).currencyLogo +
-                                " " +
-                                Provider.of<CartManager>(context, listen: false)
-                                    .totalFiltered
-                                    .toString() +
-                                S.of(context).currencyLogo,
-                            style: Styles.boldTextStyle.copyWith(
-                              color: Styles.secondary2Color,
-                              fontWeight: FontWeight.w700,
-                              fontSize: Styles.fontSize15,
-                            ),
-                            // textAlign: TextAlign.center,
-                          )),
+                  child: Consumer<CartManager>(builder: (context, cart, child) {
+                    cart.loadData();
+                    return Text(
+                      S.of(context).currencyLogo +
+                          " " +
+                          Provider.of<CartManager>(context, listen: false)
+                              .total
+                              .toString() +
+                          S.of(context).currencyLogo,
+                      style: Styles.boldTextStyle.copyWith(
+                        color: Styles.secondary2Color,
+                        fontWeight: FontWeight.w700,
+                        fontSize: Styles.fontSize15,
+                      ),
+                      // textAlign: TextAlign.center,
+                    );
+                  }),
                 ),
               ],
             ),
@@ -200,13 +202,10 @@ class _CartItemsState extends State<CartItems>
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
-                  itemCount: cart.filterCartItems.length,
+                  itemCount: cart.cartItems.length,
                   itemBuilder: (context, index) {
-                    print(cart.filterCartItems[index].quantity);
-                    return CartListItem(cart.filterCartItems[index]
-
-                        //  value.cartItems[index]
-                        );
+                    print(cart.filterCartItems[index].data);
+                    return CartListItem(cart.cartItems[index]);
                   },
                   separatorBuilder: (context, index) {
                     return SizedBox(

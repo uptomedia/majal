@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -94,6 +96,7 @@ class _SplashcreenState extends State<SplashScreen> {
                             snapshot.data['cartItems'] is List<Product>) {
                           List<Product> localCartProducts =
                               snapshot.data['cartItems'];
+                          List<Product> cartt = snapshot.data['cart'];
                           print(snapshot.data);
                           String cart_key = snapshot.data["cart_key"];
                           double total = snapshot.data['total'];
@@ -102,9 +105,9 @@ class _SplashcreenState extends State<SplashScreen> {
                               .setProductsFromLocalCart(localCartProducts);
                           Provider.of<CartManager>(context, listen: false)
                               .setCartItemsFromLocalData(
-                                  localCartProducts, cart_key, total);
-                          Provider.of<CartManager>(context, listen: false)
-                              .setWishCartItemsFromLocalData(localCartProducts);
+                                  cartt, cart_key, total);
+                          // Provider.of<CartManager>(context, listen: false)
+                          //     .setWishCartItemsFromLocalData(cartt);
                         }
 
                         if (Provider.of<ProductsManager>(context, listen: false)
@@ -124,7 +127,7 @@ class _SplashcreenState extends State<SplashScreen> {
                         return Provider.of<ProductsManager>(context,
                                         listen: false)
                                     .ApiCall >
-                                3
+                                2
                             ? NavigationScreen()
                             : _AppLoadingScreen();
                       });
@@ -137,41 +140,64 @@ class _SplashcreenState extends State<SplashScreen> {
       consumerSecret: Secret.consumerSecret);
 
   Future loadData() async {
+    List<Product> cart = [];
     List<Product> localCartItems = [];
     List<Product> localWishItems = [];
     String cartKey = "";
     double total = 0.0;
     try {
+      FlutterSecureStorage _storage = FlutterSecureStorage();
+      String? criddentials = await _storage.read(key: "auth_data");
+      Map<String, String> headers = {
+        HttpHeaders.contentTypeHeader: 'application/json',
+        HttpHeaders.authorizationHeader: 'Basic ' + criddentials!
+      };
+      var response = await http.get(
+        Uri.parse("${Secret.baseUrl}/wp-json/cocart/v2/cart/"),
+        headers: headers,
+      );
+      print(response.body);
       Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
       final SharedPreferences prefs = await _prefs;
+      await prefs.setString(localCartStorageKey, response.body);
       String? cartData = prefs.getString(localCartStorageKey);
       String? wishData = prefs.getString(localWishStorageKey);
       if (cartData != null) {
         var items = json.decode(cartData);
-        total = double.parse(items["totals"]["total"]) ?? 0.0;
+        total = double.parse(items["totals"]["total"]) / 100 ?? 0.0;
         cartKey = items["cart_key"];
         print(items);
-        Map<int, Map<String, dynamic>> itemIds = {};
+        Map<String, Map<String, dynamic>> itemKeys = {};
         (items["items"] as List<dynamic>).forEach((item) {
           print(item);
           if (item['id'] != null && item['id'] is int) {
-            itemIds[item['id']] = {
+            itemKeys[item['item_key']] = {
+              'id': item['id'],
               "quantity": item['quantity']["value"] ?? 1,
               "item_key": item['item_key']
             };
           }
         });
+        List<int> itemsIds =
+            itemKeys.values.map((e) => e['id'] as int).toList();
         print(".....................");
-        if (itemIds.length > 0) {
+        if (itemKeys.length > 0) {
           APICall = APICall + 1;
 
-          List<dynamic> fetchedCartItems =
-              await fetchCartItems(itemIds.keys.toList());
+          List<dynamic> fetchedCartItems = await fetchCartItems(itemsIds);
           fetchedCartItems.forEach((item) {
+            var itemData = itemKeys.values
+                .firstWhere((element) => element["id"] == item["id"]);
             Product product = Product(item);
-            product.quantity = itemIds[item['id']]!["quantity"] ?? 1;
-            product.item_key = itemIds[item['id']]!["item_key"] ?? "";
+            product.quantity = itemData["quantity"] ?? 1;
+            product.item_key = itemData["item_key"] ?? "";
             localCartItems.add(product);
+          });
+          (items["items"] as List<dynamic>).forEach((item) {
+            Product product = Product(item);
+            product.quantity = item["quantity"]["value"] ?? 1;
+            product.item_key = item["item_key"] ?? "";
+            cart.add(product);
           });
         }
       }
@@ -216,6 +242,7 @@ class _SplashcreenState extends State<SplashScreen> {
           'wcUser': wcUserInfo,
           'wpUser': wpUserInfo,
           'cart_key': cartKey,
+          'cart': cart,
           'total': total
         };
       }
@@ -226,7 +253,8 @@ class _SplashcreenState extends State<SplashScreen> {
       'success': true,
       'cartItems': localCartItems,
       'cart_key': cartKey,
-      'total': total
+      'total': total,
+      'cart': cart,
     };
   }
 

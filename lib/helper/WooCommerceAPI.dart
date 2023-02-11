@@ -28,7 +28,7 @@ class WooCommerceAPI {
 
   Future<dynamic> getAsync(String endPoint, {String apiVersion = 'v2'}) async {
     String reqUrl = this._getUrl(endPoint, apiVersion: apiVersion);
-
+    print(reqUrl);
     try {
       final http.Response response = await http.get(Uri.parse(reqUrl));
       if (response.statusCode == 200) {

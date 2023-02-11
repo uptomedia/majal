@@ -17,11 +17,20 @@ import '../l10n/locale_provider.dart';
 import '../routing/route_paths.dart';
 import '../state/user_state.dart';
 import 'ProductDescriptionText.dart';
+import 'package:html/parser.dart';
 
 class ProductCardAumet extends StatelessWidget {
   final Product item;
 
   ProductCardAumet(this.item);
+
+  String _parseHtmlString(String htmlString) {
+    final document = parse(htmlString);
+    final String parsedString =
+        parse(document.body!.text).documentElement!.text;
+
+    return parsedString;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +43,12 @@ class ProductCardAumet extends StatelessWidget {
       },
       child: Container(
           // width: 250.w,
-          height: 177.h,
+          // height: 177.h,
           // margin: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           padding: EdgeInsets.all(12.h),
           decoration: Styles.speicialOfferDecoration.copyWith(
               borderRadius: BorderRadius.all(
-            Radius.circular(0.r),
+            Radius.circular(10.r),
           )),
           child: Row(
             children: [
@@ -77,13 +86,6 @@ class ProductCardAumet extends StatelessWidget {
                     SizedBox(
                       height: 44.h,
                     ),
-                    Text(
-                      'Bounses',
-                      style: Styles.boldTextStyle.copyWith(
-                          fontSize: Styles.fontSize11,
-                          color: Styles.ColorText,
-                          fontWeight: FontWeight.w400),
-                    )
                   ],
                 ),
               ),
@@ -126,6 +128,13 @@ class ProductCardAumet extends StatelessWidget {
                     SizedBox(
                       height: 6.h,
                     ),
+                    Text(
+                      _parseHtmlString(item.data["short_description"]),
+                      style: Styles.boldTextStyle.copyWith(
+                          fontSize: Styles.fontSize11,
+                          color: Styles.ColorText,
+                          fontWeight: FontWeight.w400),
+                    ),
                     SizedBox(
                         height: 13.h,
                         child: item.data['purchasable'] != null &&
@@ -146,7 +155,9 @@ class ProductCardAumet extends StatelessWidget {
                                         horizontal: 0, vertical: 0),
                                     child: Text('Out of Stock',
                                         style: Styles.boldTextStyle.copyWith(
-                                            fontSize: Styles.fontSize32)),
+                                            fontSize: 15.sp,
+                                            color: Styles.ColorText,
+                                            fontWeight: FontWeight.w400)),
                                   )
                             : SizedBox(
                                 width: 124.w,
@@ -155,51 +166,51 @@ class ProductCardAumet extends StatelessWidget {
                     SizedBox(
                       height: 6.h,
                     ),
-                    SizedBox(
-                      // width: 200.w,
-                      height: 13.h,
-                      child: this.item.data["total_sales"] != null
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 0, vertical: 0),
-                              child: Text(
-                                  this.item.data['total_sales'].toString() +
-                                      " Recently Orderd",
-                                  style: Styles.boldTextStyle.copyWith(
-                                      fontSize: 11.sp,
-                                      fontWeight: FontWeight.w700)))
-                          : SizedBox(
-                              height: 13.h,
-                            ),
-                    ),
-                    SizedBox(
-                      height: 6.h,
-                    ),
-                    SizedBox(
-                      width: 60.w,
-                      height: 25.h,
-                      child: Container(
-                        decoration: Styles.salePriceDecoration,
-                        child: Center(
-                          child: this.item.data["on_sale"] != null &&
-                                  this.item.data["on_sale"] == true
-                              ? Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 0, vertical: 0),
-                                  child: Text(
-                                    "JOD " +
-                                        this.item.data["sale_price"].toString(),
-                                    style: Styles.boldTextStyle.copyWith(
-                                        fontSize: Styles.fontSize11,
-                                        fontWeight: FontWeight.w700,
-                                        color: Styles.ColorText),
-                                  ))
-                              : SizedBox(
-                                  height: 13.h,
-                                ),
-                        ),
-                      ),
-                    ),
+                    // SizedBox(
+                    //   // width: 200.w,
+                    //   height: 13.h,
+                    //   child: this.item.data["total_sales"] != null
+                    //       ? Padding(
+                    //           padding: const EdgeInsets.symmetric(
+                    //               horizontal: 0, vertical: 0),
+                    //           child: Text(
+                    //               this.item.data['total_sales'].toString() +
+                    //                   " Recently Orderd",
+                    //               style: Styles.boldTextStyle.copyWith(
+                    //                   fontSize: 11.sp,
+                    //                   fontWeight: FontWeight.w700)))
+                    //       : SizedBox(
+                    //           height: 13.h,
+                    //         ),
+                    // ),
+                    // SizedBox(
+                    //   height: 6.h,
+                    // ),
+                    // SizedBox(
+                    //   width: 60.w,
+                    //   height: 25.h,
+                    //   child: Container(
+                    //     decoration: Styles.salePriceDecoration,
+                    //     child: Center(
+                    //       child: this.item.data["on_sale"] != null &&
+                    //               this.item.data["on_sale"] == true
+                    //           ? Padding(
+                    //               padding: const EdgeInsets.symmetric(
+                    //                   horizontal: 0, vertical: 0),
+                    //               child: Text(
+                    //                 "JOD " +
+                    //                     this.item.data["sale_price"].toString(),
+                    //                 style: Styles.boldTextStyle.copyWith(
+                    //                     fontSize: Styles.fontSize11,
+                    //                     fontWeight: FontWeight.w700,
+                    //                     color: Styles.ColorText),
+                    //               ))
+                    //           : SizedBox(
+                    //               height: 13.h,
+                    //             ),
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 5.h),
                     item.data['purchasable'] != null &&
                             item.data['purchasable'] &&
